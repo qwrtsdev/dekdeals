@@ -1,96 +1,82 @@
 ---
 import Logo from "@/assets/fire.png";
-import { Heart, CircleUserRound, Search, X } from "@lucide/astro";
+import { Heart, Search, X } from "@lucide/astro";
 ---
 
-<nav class="">
+<nav>
 	<div
-		class="mx-auto bg-neutral-50 lg:rounded-2xl flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4 md:gap-6"
+		data-navbar
+		class="mx-auto max-w-full border-b border-slate-200 bg-white shadow-black/20 transition-[max-width,translate,border-radius,box-shadow] duration-500 ease-[linear(0.0,0.087,0.288,0.523,0.743,0.917,1.036,1.102,1.126,1.12,1.097,1.067,1.038,1.015,0.998,0.988,0.984,0.984,0.987,0.991,0.994,0.997,1.0,1.001,1.002,1)] motion-reduce:transition-none data-scrolled:shadow-sm data-scrolled:max-w-[min(72rem,calc(100%_-_1.5rem))] data-scrolled:translate-y-3 data-scrolled:rounded-2xl data-scrolled:border md:data-scrolled:max-w-[min(72rem,calc(100%_-_3rem))] md:data-scrolled:translate-y-6"
 	>
-		<a
-			href="/"
-			class="group flex shrink-0 items-center gap-2.5 text-xl font-bold tracking-tight text-slate-950"
-			aria-label="DekDeals home"
+		<div
+			class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 md:gap-6"
 		>
-			<img src={Logo.src} alt="" class="h-9 w-9 object-contain" />
-			<span class="font-noto-sans-thai text-2xl text-brand font-black"
-				>เด็กดีลส์</span
+			<a
+				href="/"
+				class="flex shrink-0 items-center gap-2 transition-transform duration-150 hover:scale-105"
+				aria-label="DekDeals home"
 			>
-		</a>
+				<img src={Logo.src} alt="" class="size-8 object-contain" />
+				<span class="font-noto-sans-thai text-xl font-black text-brand"
+					>เด็กดีลส์</span
+				>
+			</a>
 
-		<div class="flex shrink-0 gap-1">
-			<form
-				action="/items"
-				method="get"
-				role="search"
-				class="order-3 mr-2 hidden min-w-0 md:order-0 md:flex md:max-w-md md:flex-1"
-			>
-				<label for="navbar-search" class="sr-only">ค้นหาดีล</label>
-				<div class="relative">
-					<Search
-						size={18}
-						stroke-width={2}
-						class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-					/>
-					<input
-						id="navbar-search"
-						name="q"
-						type="search"
-						placeholder="ค้นหาดีล..."
-						data-navbar-search
-						class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-10 pr-10 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 [&::-webkit-search-cancel-button]:hidden"
-					/>
-					<button
-						type="button"
-						data-navbar-search-clear
-						class="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-md p-1 text-slate-400 transition hover:bg-slate-200 hover:text-slate-700"
-						aria-label="ล้างคำค้นหา"
+			<div class="flex shrink-0 items-center gap-1">
+				<form
+					action="/items"
+					method="get"
+					role="search"
+					class="hidden min-w-0 flex-1 justify-center sm:flex"
+				>
+					<label for="navbar-search" class="sr-only"
+						>ค้นหาดีลเด็ด..</label
 					>
-						<X size={16} stroke-width={2} />
-					</button>
-				</div>
-			</form>
-			<button
-				type="button"
-				data-mobile-search-trigger
-				aria-controls="mobile-search-drawer"
-				aria-expanded="false"
-				class="rounded-lg p-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 md:hidden"
-				aria-label="เปิดค้นหา"
-			>
-				<Search size={20} stroke-width={2} />
-			</button>
-			<span
-				aria-label="Favorites"
-				class="flex items-center gap-1 text-sm font-medium text-pink-500"
-			>
+					<div class="relative w-full max-w-md">
+						<Search
+							size={18}
+							stroke-width={2}
+							class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+						/>
+						<input
+							id="navbar-search"
+							name="q"
+							type="search"
+							placeholder="ค้นหาดีล..."
+							data-navbar-search
+							class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-10 pr-10 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 [&::-webkit-search-cancel-button]:hidden"
+						/>
+						<button
+							type="button"
+							data-navbar-search-clear
+							class="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-md p-1 text-slate-400 transition hover:bg-slate-200 hover:text-slate-700"
+							aria-label="ล้างคำค้นหา"
+						>
+							<X size={16} stroke-width={2} />
+						</button>
+					</div>
+				</form>
+				<button
+					type="button"
+					data-mobile-search-trigger
+					aria-controls="mobile-search-drawer"
+					aria-expanded="false"
+					class="rounded-xl p-2.5 text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-orange-500 md:hidden"
+					aria-label="เปิดค้นหา"
+				>
+					<Search size={20} stroke-width={2} />
+				</button>
 				<button
 					type="button"
 					data-favorites-trigger
 					aria-controls="favorites-drawer"
 					aria-expanded="false"
-					class="flex items-center gap-2 rounded-lg px-3 py-2 transition hover:bg-pink-500/10 hover:text-pink-500"
+					class="rounded-xl p-2.5 text-pink-500 transition hover:bg-pink-500/10 hover:text-pink-600 focus-visible:outline-2 focus-visible:outline-pink-500"
+					aria-label="รายการโปรด"
 				>
-					<Heart size={18} stroke-width={2} class="shrink-0" />
-					<span class="sr-only">รายการโปรด</span>
+					<Heart size={20} stroke-width={2} />
 				</button>
-			</span>
-			<span
-				aria-label="Your Profile"
-				class="flex items-center gap-1 text-sm font-medium text-slate-600"
-			>
-				<a
-					href="/profile"
-					class="flex items-center gap-2 rounded-lg px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950"
-				>
-					<CircleUserRound
-						size={18}
-						stroke-width={2}
-						class="shrink-0"
-					/>
-					<span class="hidden leading-none md:inline">โปรไฟล์</span>
-				</a>
-			</span>
+			</div>
 		</div>
 	</div>
 </nav>
@@ -176,6 +162,12 @@ import { Heart, CircleUserRound, Search, X } from "@lucide/astro";
 </dialog>
 
 <script>
+	const navbar = document.querySelector<HTMLElement>("[data-navbar]");
+	const updateNavbar = () =>
+		navbar?.toggleAttribute("data-scrolled", window.scrollY > 8);
+	updateNavbar();
+	window.addEventListener("scroll", updateNavbar, { passive: true });
+
 	const trigger = document.querySelector<HTMLButtonElement>(
 		"[data-favorites-trigger]",
 	);
