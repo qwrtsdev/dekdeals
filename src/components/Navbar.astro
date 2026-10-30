@@ -1,0 +1,341 @@
+---
+import Logo from "@/assets/fire.png";
+import { Heart, CircleUserRound, Search, X } from "@lucide/astro";
+---
+
+<nav class="">
+	<div
+		class="mx-auto bg-white rounded-2xl flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4 md:gap-6"
+	>
+		<a
+			href="/"
+			class="group flex shrink-0 items-center gap-2.5 text-xl font-bold tracking-tight text-slate-950"
+			aria-label="DekDeals home"
+		>
+			<img src={Logo.src} alt="" class="h-9 w-9 object-contain" />
+			<span class="font-noto-sans-thai text-2xl text-brand font-black"
+				>เด็กดีลส์</span
+			>
+		</a>
+
+		<div class="flex shrink-0 gap-1">
+			<form
+				action="/items"
+				method="get"
+				role="search"
+				class="order-3 mr-6 hidden min-w-0 md:order-0 md:flex md:max-w-md md:flex-1"
+			>
+				<label for="navbar-search" class="sr-only">ค้นหาดีล</label>
+				<div class="relative">
+					<Search
+						size={18}
+						stroke-width={2}
+						class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+					/>
+					<input
+						id="navbar-search"
+						name="q"
+						type="search"
+						placeholder="ค้นหาดีล..."
+						data-navbar-search
+						class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-10 pr-10 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 [&::-webkit-search-cancel-button]:hidden"
+					/>
+					<button
+						type="button"
+						data-navbar-search-clear
+						class="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-md p-1 text-slate-400 transition hover:bg-slate-200 hover:text-slate-700"
+						aria-label="ล้างคำค้นหา"
+					>
+						<X size={16} stroke-width={2} />
+					</button>
+				</div>
+			</form>
+			<button
+				type="button"
+				data-mobile-search-trigger
+				aria-controls="mobile-search-drawer"
+				aria-expanded="false"
+				class="rounded-lg p-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 md:hidden"
+				aria-label="เปิดค้นหา"
+			>
+				<Search size={20} stroke-width={2} />
+			</button>
+			<span
+				aria-label="Favorites"
+				class="flex items-center gap-1 text-sm font-medium text-pink-500"
+			>
+				<button
+					type="button"
+					data-favorites-trigger
+					aria-controls="favorites-drawer"
+					aria-expanded="false"
+					class="flex items-center gap-2 rounded-lg px-3 py-2 transition hover:bg-pink-500/10 hover:text-pink-500"
+				>
+					<Heart size={18} stroke-width={2} class="shrink-0" />
+					<span class="sr-only">รายการโปรด</span>
+				</button>
+			</span>
+			<span
+				aria-label="Your Profile"
+				class="flex items-center gap-1 text-sm font-medium text-slate-600"
+			>
+				<a
+					href="/profile"
+					class="flex items-center gap-2 rounded-lg px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950"
+				>
+					<CircleUserRound
+						size={18}
+						stroke-width={2}
+						class="shrink-0"
+					/>
+					<span class="hidden leading-none md:inline">โปรไฟล์</span>
+				</a>
+			</span>
+		</div>
+	</div>
+</nav>
+
+<div
+	id="mobile-search-drawer"
+	data-mobile-search-drawer
+	role="dialog"
+	aria-modal="true"
+	aria-hidden="true"
+	class="pointer-events-none fixed inset-x-0 top-0 z-50 -translate-y-full border-b border-slate-200 bg-white p-4 text-left opacity-0 shadow-2xl transition-all duration-300 ease-out"
+	aria-labelledby="mobile-search-title"
+>
+	<div class="flex items-center gap-3">
+		<h2 id="mobile-search-title" class="sr-only">ค้นหาดีล</h2>
+		<form action="/items" method="get" role="search" class="min-w-0 flex-1">
+			<label for="mobile-navbar-search" class="sr-only">ค้นหาดีล</label>
+			<div class="relative">
+				<Search
+					size={18}
+					stroke-width={2}
+					class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+				/>
+				<input
+					id="mobile-navbar-search"
+					name="q"
+					type="search"
+					placeholder="ค้นหาดีล..."
+					data-navbar-search
+					class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-10 pr-10 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 [&::-webkit-search-cancel-button]:hidden"
+				/>
+				<button
+					type="button"
+					data-navbar-search-clear
+					class="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-md p-1 text-slate-400 transition hover:bg-slate-200 hover:text-slate-700"
+					aria-label="ล้างคำค้นหา"
+				>
+					<X size={16} stroke-width={2} />
+				</button>
+			</div>
+		</form>
+		<button
+			type="button"
+			data-mobile-search-close
+			class="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+			aria-label="ปิดค้นหา"
+		>
+			<X size={20} stroke-width={2} />
+		</button>
+	</div>
+</div>
+<div
+	data-mobile-search-backdrop
+	class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity duration-300"
+	aria-hidden="true"
+>
+</div>
+
+<dialog
+	id="favorites-drawer"
+	data-favorites-drawer
+	class="fixed inset-y-0 right-0 m-0 ml-auto flex h-full max-h-none w-full max-w-sm translate-x-full flex-col bg-white p-0 text-left shadow-2xl transition-transform duration-300 ease-out backdrop:bg-black/50 md:max-w-xl [&:not([open])]:hidden"
+	aria-labelledby="favorites-title"
+>
+	<div
+		class="flex items-center justify-between border-b border-slate-200 px-6 py-5"
+	>
+		<h2 id="favorites-title" class="text-lg font-semibold text-slate-950">
+			รายการโปรด
+		</h2>
+		<button
+			type="button"
+			data-favorites-close
+			class="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+			aria-label="ปิดรายการโปรด"
+		>
+			<X size={20} stroke-width={2} />
+		</button>
+	</div>
+	<div class="flex flex-1 items-center justify-center px-6 text-center">
+		<p class="text-sm text-slate-500">ยังไม่มีสินค้าที่บันทึกไว้</p>
+	</div>
+</dialog>
+
+<script>
+	const trigger = document.querySelector<HTMLButtonElement>(
+		"[data-favorites-trigger]",
+	);
+	const drawer = document.querySelector<HTMLDialogElement>(
+		"[data-favorites-drawer]",
+	);
+	const closeButton = document.querySelector<HTMLButtonElement>(
+		"[data-favorites-close]",
+	);
+	const searchInputs = document.querySelectorAll<HTMLInputElement>(
+		"[data-navbar-search]",
+	);
+	const searchClearButtons = document.querySelectorAll<HTMLButtonElement>(
+		"[data-navbar-search-clear]",
+	);
+
+	searchInputs.forEach((searchInput, index) => {
+		const searchClearButton = searchClearButtons[index];
+		if (!searchClearButton) return;
+
+		const updateSearchClearButton = () => {
+			searchClearButton.classList.toggle(
+				"hidden",
+				searchInput.value.length === 0,
+			);
+		};
+
+		searchInput.addEventListener("input", updateSearchClearButton);
+		searchClearButton.addEventListener("click", () => {
+			searchInput.value = "";
+			updateSearchClearButton();
+			searchInput.focus();
+		});
+	});
+
+	const mobileSearchTrigger = document.querySelector<HTMLButtonElement>(
+		"[data-mobile-search-trigger]",
+	);
+	const mobileSearchDrawer = document.querySelector<HTMLDivElement>(
+		"[data-mobile-search-drawer]",
+	);
+	const mobileSearchBackdrop = document.querySelector<HTMLDivElement>(
+		"[data-mobile-search-backdrop]",
+	);
+	const mobileSearchClose = document.querySelector<HTMLButtonElement>(
+		"[data-mobile-search-close]",
+	);
+
+	if (
+		mobileSearchTrigger &&
+		mobileSearchDrawer &&
+		mobileSearchBackdrop &&
+		mobileSearchClose
+	) {
+		let mobileSearchCloseTimeout: number | undefined;
+
+		const closeMobileSearch = () => {
+			mobileSearchDrawer.classList.remove("translate-y-0");
+			mobileSearchDrawer.classList.add("-translate-y-full");
+			mobileSearchDrawer.classList.remove(
+				"opacity-100",
+				"pointer-events-auto",
+			);
+			mobileSearchDrawer.classList.add(
+				"opacity-0",
+				"pointer-events-none",
+			);
+			mobileSearchBackdrop.classList.remove(
+				"opacity-100",
+				"pointer-events-auto",
+			);
+			mobileSearchBackdrop.classList.add(
+				"opacity-0",
+				"pointer-events-none",
+			);
+			mobileSearchDrawer.setAttribute("aria-hidden", "true");
+			mobileSearchTrigger.setAttribute("aria-expanded", "false");
+			document.body.classList.remove("overflow-hidden");
+			mobileSearchCloseTimeout = window.setTimeout(() => {
+				mobileSearchDrawer.style.visibility = "hidden";
+			}, 300);
+			mobileSearchTrigger.focus();
+		};
+
+		mobileSearchTrigger.addEventListener("click", () => {
+			window.clearTimeout(mobileSearchCloseTimeout);
+			mobileSearchDrawer.style.visibility = "visible";
+			mobileSearchTrigger.setAttribute("aria-expanded", "true");
+			mobileSearchDrawer.setAttribute("aria-hidden", "false");
+			mobileSearchDrawer.classList.remove(
+				"-translate-y-full",
+				"opacity-0",
+				"pointer-events-none",
+			);
+			mobileSearchDrawer.classList.add(
+				"translate-y-0",
+				"opacity-100",
+				"pointer-events-auto",
+			);
+			mobileSearchBackdrop.classList.remove(
+				"opacity-0",
+				"pointer-events-none",
+			);
+			mobileSearchBackdrop.classList.add(
+				"opacity-100",
+				"pointer-events-auto",
+			);
+			document.body.classList.add("overflow-hidden");
+			requestAnimationFrame(() => {
+				mobileSearchDrawer
+					.querySelector<HTMLInputElement>("[data-navbar-search]")
+					?.focus();
+			});
+		});
+		mobileSearchClose.addEventListener("click", closeMobileSearch);
+		mobileSearchBackdrop.addEventListener("click", closeMobileSearch);
+		document.addEventListener("keydown", (event) => {
+			if (
+				event.key === "Escape" &&
+				mobileSearchTrigger.getAttribute("aria-expanded") === "true"
+			) {
+				closeMobileSearch();
+				mobileSearchTrigger.setAttribute("aria-expanded", "false");
+				mobileSearchTrigger.focus();
+			}
+		});
+	}
+
+	if (trigger && drawer && closeButton) {
+		let closeTimeout: number | undefined;
+
+		const openDrawer = () => {
+			window.clearTimeout(closeTimeout);
+			drawer.showModal();
+			trigger.setAttribute("aria-expanded", "true");
+			requestAnimationFrame(() => {
+				drawer.classList.remove("translate-x-full");
+				drawer.classList.add("translate-x-0");
+				closeButton.focus();
+			});
+		};
+
+		const closeDrawer = () => {
+			drawer.classList.remove("translate-x-0");
+			drawer.classList.add("translate-x-full");
+			closeTimeout = window.setTimeout(() => drawer.close(), 300);
+		};
+
+		trigger.addEventListener("click", openDrawer);
+		closeButton.addEventListener("click", closeDrawer);
+		drawer.addEventListener("click", (event) => {
+			if (event.target === drawer) closeDrawer();
+		});
+		drawer.addEventListener("cancel", (event) => {
+			event.preventDefault();
+			closeDrawer();
+		});
+		drawer.addEventListener("close", () => {
+			trigger.setAttribute("aria-expanded", "false");
+			trigger.focus();
+		});
+	}
+</script>

@@ -12,7 +12,7 @@ export default defineConfig({
       provider: fontProviders.google(),
       name: "Noto Sans Thai",
       cssVariable: "--font-noto-sans-thai",
-      weights: [400, 500, 600, 700],
+      weights: [400, 500, 600, 700, 900],
       styles: ["normal"],
     }
   ],
