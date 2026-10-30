@@ -1,16 +1,118 @@
 ---
+import GradientASCII from "@/components/GradientASCII.jsx";
+import Navbar from "@/components/Navbar.astro";
+import "@/styles/global.css";
 ---
 
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<link
+			rel="icon"
+			type="image/x-icon"
+			href="/favicon.ico"
+			sizes="96x96"
+		/>
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>DekDeals</title>
 	</head>
-	<body>
-		<h1>Astro</h1>
+	<body class="min-h-screen bg-neutral-950 text-slate-900">
+		<div class="relative isolate overflow-hidden">
+			<GradientASCII
+				client:load
+				className="absolute! inset-0! z-0!"
+				colors={["#d88d1e", "#ffd9b2", "#ffdea5", "#f8b238"]}
+				shape="horizon"
+				gradientOpacity={1}
+				mouseInteraction={false}
+				dpr={undefined}
+				style={undefined}
+			/>
+			<div class="relative z-10">
+				<Navbar />
+				<main>
+					<section
+						class="mx-auto grid min-h-112 max-w-6xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-center"
+					>
+						<!--  -->
+					</section>
+
+					<section class="border-t border-slate-200 bg-white">
+						<div class="mx-auto max-w-6xl px-6 py-12">
+							<div
+								class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"
+							>
+								<div>
+									<p
+										class="text-sm font-semibold uppercase tracking-widest text-brand"
+									>
+										Simple by design
+									</p>
+									<h2
+										class="mt-2 text-2xl font-bold tracking-tight text-slate-950"
+									>
+										Only the useful stuff
+									</h2>
+								</div>
+								<a
+									href="/items"
+									class="text-sm font-semibold text-slate-600 hover:text-orange-600"
+									>ส่องดีลอื่นทั้งหมด →</a
+								>
+							</div>
+							<div
+								class="mt-8 grid gap-4 md:grid-cols-4 sm:grid-cols-3 grid-cols-2"
+							>
+								<div class="rounded-2xl bg-slate-50 p-5">
+									<p class="text-lg font-bold text-slate-950">
+										<!-- image -->
+										dfkdf
+									</p><p
+										class="mt-2 text-sm leading-6 text-slate-600"
+									>
+										<!-- description -->
+										fdfdfd
+									</p>
+								</div>
+								<div class="rounded-2xl bg-slate-50 p-5">
+									<p class="text-lg font-bold text-slate-950">
+										<!-- image -->
+										dfkdf
+									</p><p
+										class="mt-2 text-sm leading-6 text-slate-600"
+									>
+										<!-- description -->
+										fdfdfd
+									</p>
+								</div>
+								<div class="rounded-2xl bg-slate-50 p-5">
+									<p class="text-lg font-bold text-slate-950">
+										<!-- image -->
+										dfkdf
+									</p><p
+										class="mt-2 text-sm leading-6 text-slate-600"
+									>
+										<!-- description -->
+										fdfdfd
+									</p>
+								</div>
+								<div class="rounded-2xl bg-slate-50 p-5">
+									<p class="text-lg font-bold text-slate-950">
+										<!-- image -->
+										dfkdf
+									</p><p
+										class="mt-2 text-sm leading-6 text-slate-600"
+									>
+										<!-- description -->
+										fdfdfd
+									</p>
+								</div>
+							</div>
+						</div>
+					</section>
+				</main>
+			</div>
+		</div>
 	</body>
 </html>
