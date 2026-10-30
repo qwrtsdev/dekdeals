@@ -1,118 +1,185 @@
 ---
-import GradientASCII from "@/components/GradientASCII.jsx";
-import Navbar from "@/components/Navbar.astro";
-import "@/styles/global.css";
+import HeroASCII from "@/components/HeroASCII.jsx";
+import Layout from "@/layouts/Layout.astro";
+import DealCard from "@/components/DealCard.astro";
+import { getCollection } from "astro:content";
+import { ArrowRight, MessageSquarePlus, Search } from "@lucide/astro";
+
+const deals = await getCollection("offers");
+const featured = deals.filter(({ data }) => data.featured);
+const suggestUrl = "https://github.com/qwrtsdev/dekdeals/issues/new";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link
-			rel="icon"
-			type="image/x-icon"
-			href="/favicon.ico"
-			sizes="96x96"
-		/>
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>DekDeals</title>
-	</head>
-	<body class="min-h-screen bg-neutral-950 text-slate-900">
-		<div class="relative isolate overflow-hidden">
-			<GradientASCII
-				client:load
-				className="absolute! inset-0! z-0!"
-				colors={["#d88d1e", "#ffd9b2", "#ffdea5", "#f8b238"]}
-				shape="horizon"
-				gradientOpacity={1}
-				mouseInteraction={false}
-				dpr={undefined}
-				style={undefined}
-			/>
-			<div class="relative z-10">
-				<Navbar />
-				<main>
-					<section
-						class="mx-auto grid min-h-112 max-w-6xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-center"
-					>
-						<!--  -->
-					</section>
-
-					<section class="border-t border-slate-200 bg-white">
-						<div class="mx-auto max-w-6xl px-6 py-12">
-							<div
-								class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"
-							>
-								<div>
-									<p
-										class="text-sm font-semibold uppercase tracking-widest text-brand"
-									>
-										Simple by design
-									</p>
-									<h2
-										class="mt-2 text-2xl font-bold tracking-tight text-slate-950"
-									>
-										Only the useful stuff
-									</h2>
-								</div>
-								<a
-									href="/items"
-									class="text-sm font-semibold text-slate-600 hover:text-orange-600"
-									>ส่องดีลอื่นทั้งหมด →</a
-								>
-							</div>
-							<div
-								class="mt-8 grid gap-4 md:grid-cols-4 sm:grid-cols-3 grid-cols-2"
-							>
-								<div class="rounded-2xl bg-slate-50 p-5">
-									<p class="text-lg font-bold text-slate-950">
-										<!-- image -->
-										dfkdf
-									</p><p
-										class="mt-2 text-sm leading-6 text-slate-600"
-									>
-										<!-- description -->
-										fdfdfd
-									</p>
-								</div>
-								<div class="rounded-2xl bg-slate-50 p-5">
-									<p class="text-lg font-bold text-slate-950">
-										<!-- image -->
-										dfkdf
-									</p><p
-										class="mt-2 text-sm leading-6 text-slate-600"
-									>
-										<!-- description -->
-										fdfdfd
-									</p>
-								</div>
-								<div class="rounded-2xl bg-slate-50 p-5">
-									<p class="text-lg font-bold text-slate-950">
-										<!-- image -->
-										dfkdf
-									</p><p
-										class="mt-2 text-sm leading-6 text-slate-600"
-									>
-										<!-- description -->
-										fdfdfd
-									</p>
-								</div>
-								<div class="rounded-2xl bg-slate-50 p-5">
-									<p class="text-lg font-bold text-slate-950">
-										<!-- image -->
-										dfkdf
-									</p><p
-										class="mt-2 text-sm leading-6 text-slate-600"
-									>
-										<!-- description -->
-										fdfdfd
-									</p>
-								</div>
-							</div>
-						</div>
-					</section>
-				</main>
+<Layout>
+	<main>
+		<section
+			class="relative isolate z-10 px-6 pb-0 pt-20 sm:pb-24 sm:pt-28"
+		>
+			<!-- ASCII art: starts behind the navbar (-top-20), bleeds 11rem below the hero, then fades into the page -->
+			<div
+				class="pointer-events-none absolute inset-x-0 -top-20 z-[-1] h-[calc(100%+16rem)] [mask-image:linear-gradient(to_bottom,black_calc(100%_-_8rem),transparent)]"
+			>
+				<HeroASCII
+					client:load
+					className="absolute! inset-0!"
+					shape="horizon"
+					gradientOpacity={1}
+					mouseInteraction={false}
+					dpr={undefined}
+					style={undefined}
+				/>
+				<div
+					class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(250_250_250/0.75),transparent_65%)] dark:bg-[radial-gradient(ellipse_at_center,rgb(23_23_23/0.7),transparent_65%)]"
+				>
+				</div>
 			</div>
-		</div>
-	</body>
-</html>
+
+			<div class="mx-auto max-w-3xl text-center">
+				<h1 class="tracking-tight drop-shadow-md">
+					<span
+						class="block text-4xl font-bold text-neutral-100 sm:text-5xl [-webkit-text-stroke:4px_black] [paint-order:stroke_fill]"
+						>เพราะเป็นนักศึกษาทั้งที</span
+					>
+					<span
+						class="mt-1 block text-5xl font-black leading-[1.2] text-orange-400 [-webkit-text-stroke:6px_white] [paint-order:stroke_fill] sm:text-7xl lg:text-8xl"
+						>ต้องใช้ให้คุ้ม</span
+					>
+				</h1>
+				<p class="mx-auto mt-5 max-w-xl text-base leading-7 sm:text-lg">
+					เรารวบรวมดีลจากแบรนด์ดังที่ใช้สิทธิ์นักศึกษา
+				</p>
+				<p
+					class="text-lg font-semibold text-ink underline decoration-orange-400 decoration-wavy decoration-2 underline-offset-[6px]"
+				>
+					เพื่อมอบความคุ้มขั้นสุดให้คุณ
+				</p>
+
+				<form
+					action="/deals"
+					method="get"
+					role="search"
+					class="mx-auto mt-8 flex max-w-xl items-center gap-2 rounded-2xl bg-white p-2 shadow-2xl ring-1 shadow-orange-950/20 ring-black/5 dark:shadow-orange-950/40"
+				>
+					<label for="hero-search" class="sr-only">ค้นหาดีล</label>
+					<Search
+						size={20}
+						stroke-width={2}
+						class="ml-3 shrink-0 text-slate-400"
+					/>
+					<input
+						id="hero-search"
+						name="q"
+						type="search"
+						placeholder="ค้นหาชื่อแบรนด์..."
+						class="min-w-0 flex-1 bg-transparent py-2 text-base text-slate-950 outline-none placeholder:text-slate-400"
+					/>
+					<button
+						type="submit"
+						class="shrink-0 rounded-xl bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+					>
+						ค้นหา
+					</button>
+				</form>
+			</div>
+		</section>
+
+		<section
+			class="relative z-20 mx-auto max-w-6xl px-6 6xl:px-0 pb-6 pt-20"
+		>
+			<div class="flex items-end justify-between gap-4">
+				<h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
+					ดีลดีที่อยากแนะนำ
+				</h2>
+				<a
+					href="/deals"
+					class="group inline-flex shrink-0 items-center gap-1 text-sm text-muted transition hover:text-orange-400"
+				>
+					อ่านทั้งหมด
+					<ArrowRight
+						size={16}
+						stroke-width={2}
+						class="transition group-hover:translate-x-0.5"
+					/>
+				</a>
+			</div>
+
+			<ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				{
+					featured.map((deal) => (
+						<li>
+							<DealCard deal={deal} />
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<!-- every deal is rendered hidden; the script below shows the ones in this browser's favorites -->
+		<section
+			data-fav-section
+			hidden
+			class="relative z-20 mx-auto max-w-6xl px-6 pt-20"
+		>
+			<h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
+				ดีลที่คุณชอบ
+			</h2>
+			<ul
+				data-fav-list
+				class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+			>
+				{
+					deals.map((deal) => (
+						<li data-deal-id={deal.id} hidden>
+							<DealCard deal={deal} />
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<section class="mx-auto max-w-6xl px-6 py-20">
+			<div
+				class="flex flex-col items-start gap-6 rounded-xl bg-orange-400 p-6 sm:p-8 md:flex-row md:items-center md:justify-between"
+			>
+				<div>
+					<h2 class="text-2xl font-bold text-white sm:text-3xl">
+						ไม่มีดีลที่ต้องการเหรอ?
+					</h2>
+					<p class="mt-2 text-orange-50">
+						อาจจะมีแต่เราไม่รู้เองก็ได้นะ TT<br />
+						มาร่วมช่วย Contribute โปรเจคนี้ให้ดีขึ้นกว่าเดิมได้เลย!
+					</p>
+				</div>
+				<a
+					href={suggestUrl}
+					target="_blank"
+					rel="noopener"
+					class="inline-flex shrink-0 items-center gap-2 rounded-xl bg-neutral-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800"
+				>
+					<MessageSquarePlus size={18} stroke-width={2} />
+					ส่ง Issues บน GitHub
+				</a>
+			</div>
+		</section>
+	</main>
+</Layout>
+
+<script>
+	import { getSaved, onSavedChange } from "@/lib/saved";
+
+	const section = document.querySelector<HTMLElement>("[data-fav-section]")!;
+	const list = section.querySelector<HTMLUListElement>("[data-fav-list]")!;
+	const items = [...list.querySelectorAll<HTMLLIElement>("[data-deal-id]")];
+
+	function renderFavorites() {
+		const ids = getSaved("favorites");
+		const shown = ids
+			.map((id) => items.find((li) => li.dataset.dealId === id))
+			.filter((li) => li !== undefined);
+		items.forEach((li) => (li.hidden = !shown.includes(li)));
+		list.append(...shown); // newest favorite first
+		section.hidden = shown.length === 0;
+	}
+	renderFavorites();
+	onSavedChange(renderFavorites);
+</script>

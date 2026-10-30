@@ -1,0 +1,38 @@
+---
+// The deal's site icon (from `npm run og`), or the provider's first letter when it has none.
+// Pass size, rounding and text size through `class`.
+interface Props {
+	provider: string;
+	icon?: string;
+	class?: string;
+}
+
+const { provider, icon, class: className } = Astro.props;
+---
+
+{
+	icon ? (
+		<span
+			aria-hidden="true"
+			class:list={["grid shrink-0 overflow-hidden bg-white", className]}
+		>
+			<img
+				src={icon}
+				alt=""
+				loading="lazy"
+				referrerpolicy="no-referrer"
+				class="size-full object-contain"
+			/>
+		</span>
+	) : (
+		<span
+			aria-hidden="true"
+			class:list={[
+				"grid shrink-0 place-items-center bg-orange-400 font-black text-white",
+				className,
+			]}
+		>
+			{provider[0]}
+		</span>
+	)
+}

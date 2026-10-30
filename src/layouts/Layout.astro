@@ -1,0 +1,80 @@
+---
+import Navbar from "@/components/Navbar.astro";
+import ShapeGrid from "@/components/ShapeGrid.jsx";
+import "@/styles/global.css";
+import { Font } from "astro:assets";
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title,
+	description = "แคตตาล็อครวมส่วนลดและสิทธิพิเศษสำหรับนักเรียนนักศึกษา เพื่อความคุ้มขั้นสุด",
+} = Astro.props;
+---
+
+<html lang="th">
+	<head>
+		<meta charset="utf-8" />
+		<link
+			rel="icon"
+			type="image/x-icon"
+			href="/favicon.ico"
+			sizes="96x96"
+		/>
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<title>{title ? `${title} - DekD(eals)` : "DekD(eals)"}</title>
+		<Font cssVariable="--font-noto-sans-thai" preload />
+		<script is:inline>
+			let theme = null;
+			try {
+				theme = localStorage.getItem("theme");
+			} catch {}
+			document.documentElement.classList.toggle(
+				"dark",
+				theme
+					? theme === "dark"
+					: matchMedia("(prefers-color-scheme: dark)").matches,
+			);
+		</script>
+	</head>
+	<body class="min-h-screen bg-page text-ink antialiased">
+		<div class="sticky top-0 z-50">
+			<Navbar />
+		</div>
+		<slot />
+		<footer class="relative isolate overflow-hidden border-t border-line">
+			<!-- grey lines read on both themes, so the grid doesn't need to track the theme -->
+			<ShapeGrid
+				client:visible
+				className="pointer-events-none absolute! inset-x-0! -top-24! h-[calc(100%+12rem)]! z-[-1]"
+				shape="square"
+				cellSize={32}
+				direction="diagonal"
+				speed={0.3}
+				lineColor="#a3a3a3"
+				hoverColor="#f97316"
+				opacity={0.45}
+				fade={0.6}
+			/>
+			<div
+				class="mx-auto sm:flex max-w-6xl justify-between px-6 py-6 text-center"
+			>
+				<p class="text-sm">
+					made by <a
+						href="https://qwrts.dev/"
+						target="_blank"
+						class="underline">qwrtsdev</a
+					>
+				</p>
+				<p class="text-sm sm:text-right">
+					กรุณาตรวจสอบข้อมูลก่อนสมัครเสมอเพื่อความถูกต้อง
+				</p>
+			</div>
+		</footer>
+	</body>
+</html>

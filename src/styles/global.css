@@ -1,5 +1,39 @@
 @import "tailwindcss";
 
+/* Theme: <html class="dark"> switches the tokens below. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+	--color-page: var(--page);
+	--color-surface: var(--surface);
+	--color-subtle: var(--subtle);
+	--color-line: var(--line);
+	--color-ink: var(--ink);
+	--color-muted: var(--muted);
+	--color-faint: var(--faint);
+}
+
+:root {
+	--page: #fafafa;
+	--surface: #ffffff;
+	--subtle: #f5f5f5;
+	--line: #e5e5e5;
+	--ink: #171717;
+	--muted: #525252;
+	--faint: #737373;
+}
+
+.dark {
+	color-scheme: dark;
+	--page: #171717;
+	--surface: #262626;
+	--subtle: rgb(255 255 255 / 0.06);
+	--line: rgb(255 255 255 / 0.1);
+	--ink: #ffffff;
+	--muted: #d4d4d4;
+	--faint: #a3a3a3;
+}
+
 html,
 body {
 	font-family: var(--font-noto-sans-thai), sans-serif;
@@ -19,12 +53,10 @@ body::-webkit-scrollbar {
 	--color-orange-600: #ea580c;
 	--color-orange-700: #c2410c;
 	--color-orange-900: #7c2d12;
-	--color-brand-gradient-start: #ea580c;
-	--color-brand-gradient-end: #f59e0b;
 }
 
 .text-brand {
-	color: var(--color-orange-600);
+	color: var(--color-orange-400);
 }
 
 .text-brand-dark {
@@ -43,19 +75,146 @@ body::-webkit-scrollbar {
 	border-color: var(--color-orange-200);
 }
 
-.brand-gradient {
-	background-image: linear-gradient(
-		135deg,
-		var(--color-brand-gradient-start),
-		var(--color-brand-gradient-end)
-	);
-}
-
 .brand-shadow {
 	box-shadow: 0 20px 25px -5px rgb(234 88 12 / 0.2);
 }
 
 .font-noto-sans-thai {
 	font-family: var(--font-noto-sans-thai), sans-serif;
-	font-weight: 400;
+}
+/* Markdown body of a deal page (src/pages/deals/[slug].astro) */
+.deal-prose {
+	max-width: 70ch;
+	color: var(--muted);
+	line-height: 1.8;
+}
+
+.deal-prose > :first-child {
+	margin-top: 0;
+}
+
+.deal-prose h1 {
+	margin: 2.5rem 0 1rem;
+	font-size: 1.875rem;
+	font-weight: 800;
+	line-height: 1.4;
+	color: var(--ink);
+}
+
+.deal-prose h2 {
+	margin: 2.5rem 0 0.75rem;
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: 1.4;
+	color: var(--ink);
+}
+
+.deal-prose h3 {
+	margin: 1.75rem 0 0.5rem;
+	font-size: 1.25rem;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--ink);
+}
+
+.deal-prose p {
+	margin-top: 0.75rem;
+}
+
+.deal-prose strong {
+	font-weight: 600;
+	color: var(--ink);
+}
+
+.deal-prose a {
+	color: var(--color-blue-600);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+}
+
+.deal-prose a:hover {
+	text-decoration-thickness: 2px;
+}
+
+.dark .deal-prose a {
+	color: var(--color-blue-400);
+}
+
+.deal-prose ul,
+.deal-prose ol {
+	display: grid;
+	gap: 0.5rem;
+	margin-top: 0.75rem;
+	padding-left: 0;
+	list-style: none;
+}
+
+.deal-prose li {
+	position: relative;
+}
+
+/* orange dot bullets */
+.deal-prose ul > li {
+	padding-left: 1.5rem;
+}
+
+.deal-prose ul > li::before {
+	content: "";
+	position: absolute;
+	left: 0.4rem;
+	top: calc(0.9em - 0.1875rem);
+	width: 0.375rem;
+	height: 0.375rem;
+	border-radius: 9999px;
+	background: var(--color-orange-400);
+}
+
+/* numbered steps as round badges */
+.deal-prose ol {
+	counter-reset: step;
+}
+
+.deal-prose ol > li {
+	counter-increment: step;
+	padding-left: 2.25rem;
+}
+
+.deal-prose ol > li::before {
+	content: counter(step);
+	position: absolute;
+	left: 0;
+	top: calc(0.9em - 0.75rem);
+	display: grid;
+	place-items: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	border-radius: 9999px;
+	background: color-mix(in oklab, var(--color-orange-400) 15%, transparent);
+	color: var(--color-orange-400);
+	font-size: 0.8rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.deal-prose code {
+	padding: 0.125rem 0.375rem;
+	border-radius: 0.375rem;
+	background: var(--subtle);
+	color: var(--ink);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 0.875em;
+}
+
+.deal-prose blockquote {
+	margin-top: 1rem;
+	padding: 0.75rem 1rem;
+	border-left: 3px solid var(--color-orange-400);
+	border-radius: 0 0.5rem 0.5rem 0;
+	background: var(--subtle);
+}
+
+.deal-prose hr {
+	margin: 2rem 0;
+	border-color: var(--line);
 }
