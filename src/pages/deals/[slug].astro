@@ -153,15 +153,27 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 							)
 						}
 					</dl>
-					<a
-						href={data.officialUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-400 px-5 py-3 font-semibold text-white transition hover:bg-orange-400/85"
-					>
-						ไปหน้าทางการ
-						<ExternalLink size={18} stroke-width={2} />
-					</a>
+					{
+						data.archived ? (
+							<button
+								type="button"
+								disabled
+								class="mt-6 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-subtle px-5 py-3 font-semibold text-faint"
+							>
+								ดีลนี้สิ้นสุดแล้ว
+							</button>
+						) : (
+							<a
+								href={data.officialUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-400 px-5 py-3 font-semibold text-white transition hover:bg-orange-400/85"
+							>
+								ไปหน้าทางการ
+								<ExternalLink size={18} stroke-width={2} />
+							</a>
+						)
+					}
 					<div
 						class="mt-3 grid grid-cols-2 gap-3 text-sm font-semibold"
 					>

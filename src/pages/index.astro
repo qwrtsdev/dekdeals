@@ -6,7 +6,7 @@ import { getCollection } from "astro:content";
 import { ArrowRight, MessageSquarePlus, Search } from "@lucide/astro";
 
 const deals = await getCollection("offers");
-const featured = deals.filter(({ data }) => data.featured);
+const featured = deals.filter(({ data }) => data.featured && !data.archived);
 const suggestUrl = "https://github.com/qwrtsdev/dekdeals/issues/new";
 ---
 

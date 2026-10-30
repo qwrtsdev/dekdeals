@@ -13,7 +13,10 @@ const { id, data } = Astro.props.deal;
 
 <a
 	href={`/deals/${id}`}
-	class="group relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface p-5 transition hover:border-orange-400/60"
+	class:list={[
+		"group relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface p-5 transition hover:border-orange-400/60",
+		data.archived && "opacity-60",
+	]}
 >
 	{
 		data.image && (
@@ -45,7 +48,10 @@ const { id, data } = Astro.props.deal;
 			class="text-faint transition group-hover:text-orange-400"
 		/>
 	</div>
-	<p class="mt-4 text-xs font-medium text-faint">{data.provider}</p>
+	<p class="mt-4 text-xs font-medium text-faint">
+		{data.provider}
+		{data.archived && <span class="ml-1 rounded bg-subtle px-1.5 py-0.5">สิ้นสุดแล้ว</span>}
+	</p>
 	<h3 class="text-lg font-bold text-ink">{data.name}</h3>
 	<p class="mt-2 line-clamp-2 flex-1 text-sm leading-6 text-muted">
 		{data.summary.th}

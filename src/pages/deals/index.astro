@@ -5,7 +5,9 @@ import { getCollection } from "astro:content";
 import { categories, conditionals } from "@/lib/labels";
 import { Search, SearchX } from "@lucide/astro";
 
-const deals = (await getCollection("offers")).sort((a, b) =>
+const deals = (
+	await getCollection("offers", ({ data }) => !data.archived)
+).sort((a, b) =>
 	a.data.provider.localeCompare(b.data.provider),
 );
 const usedCategories = [...new Set(deals.map((d) => d.data.category))];
