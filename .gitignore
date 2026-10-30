@@ -26,3 +26,6 @@ pnpm-debug.log*
 # misc
 AGENTS.md 
 CLAUDE.md
+
+# personal
+docs/*
