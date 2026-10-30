@@ -1,25 +1,22 @@
-// categories, conditionals and tags.
+// categories and conditionals (verification methods).
 // content.config.ts builds its schema from these
 // it fails to build if put unknown labels to items.
 
 export const categories = {
 	software: "ซอฟต์แวร์",
-	cloud: "คลาวด์",
 	entertainment: "ความบันเทิง",
 	productivity: "การทำงาน",
 } as const;
 
 export const conditionals = {
 	"email": "ยืนยันอีเมล์",
-	isic: "ต้องใช้บัตร ISIC",
 	sheerid: "ยืนยันผ่าน SheerID",
-	unidays: "ยืนยันผ่าน UNiDAYS",
 	"student-id": "ยืนยันผ่านบัตรนักศึกษา",
 	other: "ยืนยันสถานะนักศึกษา",
 } as const;
 
-export type Category = keyof typeof categories;
-export type Method = keyof typeof conditionals;
+type Category = keyof typeof categories;
+type Method = keyof typeof conditionals;
 
 // z.enum() needs a non-empty tuple
 export const categoryKeys = Object.keys(categories) as [Category, ...Category[]];

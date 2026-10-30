@@ -10,7 +10,6 @@ summary:
   en: Dozens of free developer tools, including GitHub Copilot.
 eligibility:
   method: student-id
-  availableInThailand: true
   notes: อายุ 13 ปีขึ้นไป และกำลังเรียนในหลักสูตรที่ได้วุฒิ (รวมถึง ม.ปลาย)
 featured: true
 lastVerified: 2026-10-30

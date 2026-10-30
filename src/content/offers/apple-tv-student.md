@@ -9,9 +9,7 @@ summary:
   en: Watch Apple TV for free with an Apple Music student subscription.
 eligibility:
   method: other
-  availableInThailand: true
   notes: ต้องเป็นสมาชิก Apple Music แบบนักศึกษา
-tags: [ฟรี]
 includedIn: [apple-music-student]
 lastVerified: 2026-10-31
 ---

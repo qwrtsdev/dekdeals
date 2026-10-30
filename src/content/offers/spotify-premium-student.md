@@ -9,10 +9,8 @@ summary:
   en: Premium at a student price, with ad-free and offline listening.
 eligibility:
   method: sheerid
-  availableInThailand: true
   notes: อายุ 18 ปีขึ้นไป และเรียนอยู่ในวิทยาลัยหรือมหาวิทยาลัยที่ได้รับการรับรอง
 priceNote: ประมาณ ฿79/เดือน (ปกติ ฿149/เดือน)
-tags: [ส่วนลด, ต่ออายุทุกปี]
 featured: true
 lastVerified: 2026-10-30
 ---

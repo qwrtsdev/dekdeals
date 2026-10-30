@@ -10,10 +10,8 @@ summary:
   en: Apple Music at a student price, first month free, with Apple TV included.
 eligibility:
   method: other
-  availableInThailand: true
   notes: นักศึกษาระดับอนุปริญญา ปริญญาตรี ป.โท หรือเทียบเท่า ในวิทยาลัยหรือมหาวิทยาลัย
 priceNote: ประมาณ ฿79/เดือน (ปกติ ฿149/เดือน) เดือนแรกฟรีสำหรับสมาชิกใหม่
-tags: [ส่วนลด, ต่ออายุทุกปี]
 lastVerified: 2026-10-31
 ---
 

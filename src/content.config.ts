@@ -18,11 +18,9 @@ const offers = defineCollection({
 		summary: z.object({ th: z.string(), en: z.string() }),
 		eligibility: z.object({
 			method: z.enum(methodKeys),
-			availableInThailand: z.boolean(),
 			notes: z.string().optional(),
 		}),
 		priceNote: z.string().optional(),
-		tags: z.array(z.string()).default([]),
 		// slugs of other deals (packs) that also give you this one; a wrong slug fails the build
 		includedIn: z.array(reference("offers")).default([]),
 		featured: z.boolean().default(false),

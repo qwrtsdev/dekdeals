@@ -10,9 +10,7 @@ summary:
   en: Free Education plan with file uploads and 30-day page history.
 eligibility:
   method: email
-  availableInThailand: true
   notes: เฉพาะมหาวิทยาลัยที่อยู่ใน World Higher Education Database ไม่รวมนักเรียนระดับ K-12 และไม่รับบัตรนักศึกษา
-tags: [ฟรี, ต่ออายุทุกปี]
 includedIn: [github-student-developer-pack]
 featured: true
 lastVerified: 2026-10-30
