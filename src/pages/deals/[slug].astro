@@ -1,0 +1,253 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import DealCard from "@/components/DealCard.astro";
+import DealIcon from "@/components/DealIcon.astro";
+import { getCollection, getEntries, render } from "astro:content";
+import { categories, conditionals } from "@/lib/labels";
+import {
+	ArrowLeft,
+	BadgeCheck,
+	CircleCheck,
+	CalendarDays,
+	ExternalLink,
+	Flag,
+	Heart,
+	MapPin,
+	Tag,
+	Link,
+} from "@lucide/astro";
+
+export async function getStaticPaths() {
+	const offers = await getCollection("offers");
+	return offers.map((offer) => ({
+		params: { slug: offer.id },
+		props: { offer },
+	}));
+}
+
+const { offer } = Astro.props;
+const { data } = offer;
+const { Content } = await render(offer);
+
+// packs this deal is part of, and (the other way round) deals that list this one as their pack
+const includedIn = await getEntries(data.includedIn);
+const includes = await getCollection("offers", (other) =>
+	other.data.includedIn.some((ref) => ref.id === offer.id),
+);
+
+const verified = data.lastVerified.toLocaleDateString("th-TH", {
+	day: "numeric",
+	month: "long",
+	year: "numeric",
+});
+const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encodeURIComponent(`แจ้งปัญหา : ${offer.id}`)}`;
+---
+
+<Layout title={`${data.provider} ${data.name}`} description={data.summary.th}>
+	<!-- og:image of the official page, starting behind the navbar and fading into the page -->
+	{
+		data.image && (
+			<div
+				aria-hidden="true"
+				class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[max(50vh,26rem)] overflow-hidden [mask-image:linear-gradient(to_bottom,black_15%,transparent)]"
+			>
+				<img
+					src={data.image}
+					alt=""
+					referrerpolicy="no-referrer"
+					class="size-full scale-105 object-cover opacity-70 blur-[3px] dark:opacity-60"
+				/>
+			</div>
+		)
+	}
+	<main class="mx-auto max-w-6xl px-6 py-12">
+		<a
+			href="/deals"
+			class="inline-flex items-center gap-1 text-sm font-semibold text-shadow-faint transition hover:text-orange-400"
+		>
+			<ArrowLeft size={16} stroke-width={2} />
+			ดูดีลทั้งหมด
+		</a>
+
+		<header class="mt-8 flex items-start gap-5 sm:gap-6">
+			<DealIcon
+				provider={data.provider}
+				icon={data.icon}
+				class="size-16 rounded-2xl text-2xl sm:size-20 sm:text-3xl"
+			/>
+			<div>
+				<p class="text-base font-medium text-faint">{data.provider}</p>
+				<h1
+					class="text-4xl font-black leading-tight tracking-tight sm:text-5xl"
+				>
+					{data.name}
+				</h1>
+				<p
+					class="mt-3 text-lg leading-8 text-muted sm:text-xl sm:leading-9"
+				>
+					{data.summary.th}
+				</p>
+			</div>
+		</header>
+
+		<div
+			class="mt-12 grid gap-10 sm:mt-16 lg:grid-cols-[3fr_2fr] lg:items-start"
+		>
+			<aside class="space-y-4 lg:sticky lg:top-28 lg:order-2">
+				<div class="flex flex-wrap gap-2 text-sm">
+					<a
+						href={`/deals?category=${data.category}`}
+						class="inline-flex items-center gap-1.5 rounded-lg bg-orange-400/10 px-3 py-1.5 font-medium text-orange-400 transition hover:bg-orange-400/20"
+					>
+						<Tag size={14} stroke-width={2} />
+						{categories[data.category]}
+					</a>
+					<span
+						class="inline-flex items-center gap-1.5 rounded-lg bg-subtle px-3 py-1.5 text-muted"
+					>
+						<BadgeCheck size={14} stroke-width={2} />
+						{conditionals[data.eligibility.method]}
+					</span>
+				</div>
+				<div
+					class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-sm text-faint"
+				>
+					<p class="inline-flex items-center gap-1.5">
+						<CalendarDays size={16} stroke-width={2} />
+						ตรวจสอบล่าสุด {verified}
+					</p>
+					<a
+						href={reportUrl}
+						target="_blank"
+						rel="noopener"
+						class="inline-flex items-center gap-1.5 font-medium text-red-500 transition hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+					>
+						<Flag size={16} stroke-width={2} />
+						แจ้งข้อมูลผิด
+					</a>
+				</div>
+
+				<section class="rounded-2xl border border-line bg-surface p-6">
+					<dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+						<div>
+							<dt class="text-xs font-medium text-faint">
+								ใครมีสิทธิ์
+							</dt>
+							<dd class="mt-1 text-sm leading-6">
+								{
+									data.eligibility.notes ??
+										"นักเรียน/นักศึกษาที่ยืนยันสถานะได้"
+								}
+							</dd>
+						</div>
+						{
+							data.priceNote && (
+								<div>
+									<dt class="text-xs font-medium text-faint">
+										ราคา
+									</dt>
+									<dd class="mt-1 text-sm leading-6">
+										{data.priceNote}
+									</dd>
+								</div>
+							)
+						}
+					</dl>
+					<a
+						href={data.officialUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-400 px-5 py-3 font-semibold text-white transition hover:bg-orange-400/85"
+					>
+						ไปหน้าทางการ
+						<ExternalLink size={18} stroke-width={2} />
+					</a>
+					<div
+						class="mt-3 grid grid-cols-2 gap-3 text-sm font-semibold"
+					>
+						<button
+							type="button"
+							data-save="favorites"
+							data-id={offer.id}
+							aria-pressed="false"
+							class="flex items-center justify-center gap-2 rounded-xl border border-line px-4 py-2.5 text-muted transition hover:border-pink-500/60 hover:text-pink-500 aria-pressed:border-pink-500 aria-pressed:bg-pink-500/10 aria-pressed:text-pink-600 dark:aria-pressed:text-pink-400 [&[aria-pressed=true]_svg]:fill-current"
+						>
+							<Heart size={18} stroke-width={2} />
+							รายการโปรด
+						</button>
+						<button
+							type="button"
+							data-save="done"
+							data-id={offer.id}
+							aria-pressed="false"
+							class="flex items-center justify-center gap-2 rounded-xl border border-line px-4 py-2.5 text-muted transition hover:border-emerald-500/60 hover:text-emerald-500 aria-pressed:border-emerald-500 aria-pressed:bg-emerald-500/10 aria-pressed:text-emerald-600 dark:aria-pressed:text-emerald-400 [&[aria-pressed=true]_svg]:fill-emerald-500/20"
+						>
+							<CircleCheck size={18} stroke-width={2} />
+							ใช้สิทธิ์แล้ว
+						</button>
+					</div>
+				</section>
+			</aside>
+
+			<div class="min-w-0 lg:order-1">
+				<article class="deal-prose">
+					<Content />
+				</article>
+				{
+					[
+						["รวมอยู่ใน", includedIn],
+						["ดีลที่รวมอยู่ในแพ็กนี้", includes],
+					].map(
+						([title, deals]) =>
+							deals.length > 0 && (
+								<section class="mt-12">
+									<h2 class="flex items-center gap-2 text-xl font-bold">
+										<Link size={18} />
+										{title}
+									</h2>
+									<ul class="mt-4 grid gap-4 sm:grid-cols-2">
+										{deals.map((deal) => (
+											<li>
+												<DealCard deal={deal} />
+											</li>
+										))}
+									</ul>
+								</section>
+							),
+					)
+				}
+			</div>
+		</div>
+	</main>
+</Layout>
+
+<script>
+	import {
+		getSaved,
+		onSavedChange,
+		toggleSaved,
+		type SavedKind,
+	} from "@/lib/saved";
+
+	const buttons = document.querySelectorAll<HTMLButtonElement>("[data-save]");
+
+	const sync = () =>
+		buttons.forEach((button) =>
+			button.setAttribute(
+				"aria-pressed",
+				String(
+					getSaved(button.dataset.save as SavedKind).includes(
+						button.dataset.id!,
+					),
+				),
+			),
+		);
+
+	buttons.forEach((button) =>
+		button.addEventListener("click", () =>
+			toggleSaved(button.dataset.save as SavedKind, button.dataset.id!),
+		),
+	);
+	sync();
+	onSavedChange(sync);
+</script>

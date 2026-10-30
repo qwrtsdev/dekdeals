@@ -1,0 +1,201 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import DealCard from "@/components/DealCard.astro";
+import { getCollection } from "astro:content";
+import { categories } from "@/lib/labels";
+import { Search, SearchX } from "@lucide/astro";
+
+const deals = (await getCollection("offers")).sort((a, b) =>
+	a.data.provider.localeCompare(b.data.provider),
+);
+const usedCategories = [...new Set(deals.map((d) => d.data.category))];
+
+// What the client-side fuzzy search looks at for each deal.
+const searchIndex = deals.map(({ id, data }) => ({
+	id,
+	name: data.name,
+	provider: data.provider,
+	summaryTh: data.summary.th,
+	summaryEn: data.summary.en,
+	category: categories[data.category],
+}));
+
+const chipClass =
+	"shrink-0 rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium text-muted transition hover:border-orange-400/60 hover:text-ink aria-pressed:border-orange-400 aria-pressed:bg-orange-400 aria-pressed:text-white";
+---
+
+<Layout title="ดีลทั้งหมด">
+	<main class="mx-auto max-w-6xl px-6 pb-20 pt-12">
+		<h1 class="text-3xl font-black tracking-tight sm:text-4xl">
+			ดีลทั้งหมด (<span data-count class="font-semibold text-ink"
+				>{deals.length}</span
+			>
+			)
+		</h1>
+
+		<form
+			action="/deals"
+			method="get"
+			role="search"
+			data-deals-search
+			class="mt-6 flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 shadow-sm transition focus-within:border-orange-400 focus-within:ring-4 focus-within:ring-orange-400/15"
+		>
+			<label for="deals-q" class="sr-only">ค้นหาดีล</label>
+			<Search size={20} stroke-width={2} class="shrink-0 text-faint" />
+			<input
+				id="deals-q"
+				name="q"
+				type="search"
+				autocomplete="off"
+				placeholder="ค้นหาชื่อแบรนด์ หรือแท็ก..."
+				class="min-w-0 flex-1 bg-transparent py-3.5 text-base text-ink outline-none placeholder:text-faint"
+			/>
+		</form>
+
+		<div
+			class="mt-4 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none]"
+			role="group"
+			aria-label="หมวดหมู่"
+		>
+			<button type="button" data-category="" class={chipClass}>
+				ทั้งหมด
+			</button>
+			{
+				usedCategories.map((c) => (
+					<button type="button" data-category={c} class={chipClass}>
+						{categories[c]}
+					</button>
+				))
+			}
+		</div>
+
+		<ul data-deals class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+			{
+				deals.map((deal) => (
+					<li
+						data-deal-id={deal.id}
+						data-category={deal.data.category}
+					>
+						<DealCard deal={deal} />
+					</li>
+				))
+			}
+		</ul>
+
+		<div
+			data-empty
+			hidden
+			class="mt-6 flex flex-col items-center rounded-2xl border border-dashed border-line px-6 py-16 text-center"
+		>
+			<SearchX size={32} stroke-width={1.5} class="text-faint" />
+			<p class="mt-3 font-semibold">ไม่พบดีลที่ตรงกับการค้นหา</p>
+			<p class="mt-1 text-sm text-muted">
+				ลองคำอื่น หรือ<a
+					href="https://github.com/qwrtsdev/dekdeals/issues/new"
+					target="_blank"
+					rel="noopener"
+					class="text-orange-400 underline">เสนอดีลนี้ให้เรา</a
+				>
+			</p>
+		</div>
+	</main>
+
+	<script
+		type="application/json"
+		id="deals-index"
+		set:html={JSON.stringify(searchIndex).replace(/</g, "\\u003c")}
+	/>
+</Layout>
+
+<script>
+	import Fuse from "fuse.js";
+
+	type Entry = { id: string };
+	const index: Entry[] = JSON.parse(
+		document.getElementById("deals-index")!.textContent!,
+	);
+	const fuse = new Fuse(index, {
+		keys: [
+			{ name: "provider", weight: 2 },
+			{ name: "name", weight: 2 },
+			"tags",
+			"category",
+			"summaryTh",
+			"summaryEn",
+		],
+		threshold: 0.35,
+		ignoreLocation: true,
+	});
+
+	const form = document.querySelector<HTMLFormElement>(
+		"[data-deals-search]",
+	)!;
+	const input = form.querySelector<HTMLInputElement>("input")!;
+	const list = document.querySelector<HTMLUListElement>("[data-deals]")!;
+	const items = [...list.querySelectorAll<HTMLLIElement>("[data-deal-id]")];
+	const chips = document.querySelectorAll<HTMLButtonElement>(
+		"button[data-category]",
+	);
+	const count = document.querySelector("[data-count]")!;
+	const empty = document.querySelector<HTMLElement>("[data-empty]")!;
+
+	const params = new URLSearchParams(location.search);
+	let category = params.get("category") ?? "";
+	input.value = params.get("q") ?? "";
+
+	function apply() {
+		const q = input.value.trim();
+		// Best match first while searching, original order otherwise.
+		const order = q
+			? fuse.search(q).map((r) => r.item.id)
+			: items.map((li) => li.dataset.dealId!);
+		const rank = new Map(order.map((id, i) => [id, i]));
+
+		let shown = 0;
+		for (const li of items) {
+			const ok =
+				rank.has(li.dataset.dealId!) &&
+				(!category || li.dataset.category === category);
+			li.hidden = !ok;
+			if (ok) shown++;
+		}
+		list.append(
+			...items
+				.filter((li) => !li.hidden)
+				.sort(
+					(a, b) =>
+						rank.get(a.dataset.dealId!)! -
+						rank.get(b.dataset.dealId!)!,
+				),
+		);
+
+		count.textContent = String(shown);
+		empty.hidden = shown > 0;
+		chips.forEach((chip) =>
+			chip.setAttribute(
+				"aria-pressed",
+				String(chip.dataset.category === category),
+			),
+		);
+
+		const url = new URL(location.href);
+		q ? url.searchParams.set("q", q) : url.searchParams.delete("q");
+		category
+			? url.searchParams.set("category", category)
+			: url.searchParams.delete("category");
+		history.replaceState(null, "", url);
+	}
+
+	input.addEventListener("input", apply);
+	form.addEventListener("submit", (event) => {
+		event.preventDefault();
+		apply();
+	});
+	chips.forEach((chip) =>
+		chip.addEventListener("click", () => {
+			category = chip.dataset.category ?? "";
+			apply();
+		}),
+	);
+	apply();
+</script>
