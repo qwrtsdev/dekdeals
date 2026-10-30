@@ -1,0 +1,81 @@
+# Weekly deal check (scripts/check-deals.mjs): status codes and dates only, no page content.
+# - keeps one open issue labeled `deal-health` up to date, and closes it when all is fine
+# - fills missing image/icon (scripts/fetch-og.mjs), e.g. for a newly pushed deal or a dead one
+#   the check removed
+# - opens one bot pull request with all file changes (archives + images/icons);
+#   merging it makes Vercel redeploy
+
+name: Deal health
+
+on:
+  schedule:
+    - cron: "17 2 * * 1" # Mondays 09:17 Thailand time
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["src/content/offers/**"] # new or edited deal: fill its image/icon right away
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency: deal-health
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Read the open health issue
+        id: issue
+        run: |
+          number=$(gh issue list --label deal-health --state open --json number --jq '.[0].number // empty')
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+          if [ -n "$number" ]; then gh issue view "$number" --json body --jq .body > "$RUNNER_TEMP/previous.md"; fi
+
+      - name: Check every deal
+        id: check
+        run: node scripts/check-deals.mjs "$RUNNER_TEMP/previous.md" "$RUNNER_TEMP/report.md"
+
+      - name: Fill missing images and icons
+        run: node scripts/fetch-og.mjs
+
+      # does nothing when no deal file changed
+      - name: Open a pull request with the deal updates
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: bot/deal-updates
+          add-paths: src/content/offers/*.md
+          commit-message: "chore(content): update deals from health check"
+          title: "Deal updates from health check"
+          body: |
+            Archived (official page 404/410 two weeks in a row): `${{ steps.check.outputs.archived || 'none' }}`
+            Dead image/icon replaced: `${{ steps.check.outputs.refreshed || 'none' }}`
+            New images/icons for deals that had none: see the diff.
+
+            Before merging, open archived deals' links in a browser. If a page only moved,
+            drop that file from this PR and update `officialUrl` instead.
+
+      - name: Update the health issue
+        env:
+          NUMBER: ${{ steps.issue.outputs.number }}
+          PROBLEMS: ${{ steps.check.outputs.problems }}
+        run: |
+          report="$RUNNER_TEMP/report.md"
+          if [ "$PROBLEMS" = "true" ]; then
+            if [ -n "$NUMBER" ]; then
+              gh issue edit "$NUMBER" --body-file "$report"
+            else
+              gh label create deal-health --color FB923C --description "Weekly deal check" --force
+              gh issue create --title "🩺 Deal health" --label deal-health --body-file "$report"
+            fi
+          elif [ -n "$NUMBER" ]; then
+            gh issue close "$NUMBER" --comment "All deals look healthy ✅"
+          fi
