@@ -1,5 +1,6 @@
 ---
-// The deal's site icon (from `npm run og`), or the provider's first letter when it has none.
+// The deal's site icon (from `npm run og`) drawn over the provider's first letter.
+// If the icon is missing or fails to load, the orange letter tile shows instead.
 // Pass size, rounding and text size through `class`.
 interface Props {
 	provider: string;
@@ -10,29 +11,24 @@ interface Props {
 const { provider, icon, class: className } = Astro.props;
 ---
 
-{
-	icon ? (
-		<span
-			aria-hidden="true"
-			class:list={["grid shrink-0 overflow-hidden bg-white", className]}
-		>
+<span
+	aria-hidden="true"
+	class:list={[
+		"relative grid shrink-0 place-items-center overflow-hidden bg-orange-400 font-black text-white",
+		className,
+	]}
+>
+	{provider[0]}
+	{
+		icon && (
 			<img
 				src={icon}
 				alt=""
 				loading="lazy"
 				referrerpolicy="no-referrer"
-				class="size-full object-contain"
+				onerror="this.remove()"
+				class="absolute inset-0 size-full bg-white object-contain"
 			/>
-		</span>
-	) : (
-		<span
-			aria-hidden="true"
-			class:list={[
-				"grid shrink-0 place-items-center bg-orange-400 font-black text-white",
-				className,
-			]}
-		>
-			{provider[0]}
-		</span>
-	)
-}
+		)
+	}
+</span>

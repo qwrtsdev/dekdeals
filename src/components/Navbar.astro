@@ -27,7 +27,7 @@ const dealInfo = Object.fromEntries(
 			>
 				<img src={Logo.src} alt="" class="size-8 object-contain" />
 				<span class="font-noto-sans-thai text-xl font-black text-brand"
-					>DEKD(EALS)</span
+					>DEKDEALS</span
 				>
 			</a>
 
@@ -222,7 +222,7 @@ const dealInfo = Object.fromEntries(
 			>
 				<span
 					data-initial
-					class="grid size-9 shrink-0 place-items-center rounded-lg bg-orange-400 text-sm font-black text-white"
+					class="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-orange-400 text-sm font-black text-white"
 				></span>
 				<span class="min-w-0">
 					<span data-provider class="block text-xs text-slate-500"
@@ -261,8 +261,7 @@ const dealInfo = Object.fromEntries(
 	const dealInfo: Record<
 		string,
 		{ name: string; provider: string; icon?: string }
-	> =
-		JSON.parse(document.getElementById("saved-deals")!.textContent!);
+	> = JSON.parse(document.getElementById("saved-deals")!.textContent!);
 	const itemTemplate =
 		document.querySelector<HTMLTemplateElement>("[data-saved-item]")!;
 	const favBadge = document.querySelector<HTMLElement>("[data-fav-badge]")!;
@@ -276,18 +275,19 @@ const dealInfo = Object.fromEntries(
 					true,
 				) as HTMLLIElement;
 				li.querySelector("a")!.href = `/deals/${id}`;
-				const initial = li.querySelector<HTMLElement>("[data-initial]")!;
+				// letter tile underneath; the icon covers it and removes itself if it fails to load
+				const initial =
+					li.querySelector<HTMLElement>("[data-initial]")!;
+				initial.textContent = dealInfo[id].provider[0];
 				if (dealInfo[id].icon) {
 					const img = document.createElement("img");
 					img.src = dealInfo[id].icon!;
 					img.alt = "";
 					img.referrerPolicy = "no-referrer";
-					img.className = "size-full object-contain";
-					initial.classList.replace("bg-orange-400", "bg-white");
-					initial.classList.add("overflow-hidden");
+					img.className =
+						"absolute inset-0 size-full bg-white object-contain";
+					img.onerror = () => img.remove();
 					initial.append(img);
-				} else {
-					initial.textContent = dealInfo[id].provider[0];
 				}
 				li.querySelector("[data-provider]")!.textContent =
 					dealInfo[id].provider;
