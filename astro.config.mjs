@@ -13,6 +13,7 @@ export default defineConfig({
       name: "Noto Sans Thai",
       cssVariable: "--font-noto-sans-thai",
       weights: [400, 500, 600, 700, 900],
+      subsets: ["thai", "latin"],
       styles: ["normal"],
     }
   ],
