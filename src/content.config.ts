@@ -24,6 +24,7 @@ const offers = defineCollection({
 		// slugs of other deals (packs) that also give you this one; a wrong slug fails the build
 		includedIn: z.array(reference("offers")).default([]),
 		featured: z.boolean().default(false),
+		archived: z.boolean().default(false),
 		lastVerified: z.coerce.date(),
 	}),
 });

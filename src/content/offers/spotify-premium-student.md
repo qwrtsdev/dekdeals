@@ -12,6 +12,7 @@ eligibility:
   notes: อายุ 18 ปีขึ้นไป และเรียนอยู่ในวิทยาลัยหรือมหาวิทยาลัยที่ได้รับการรับรอง
 priceNote: ประมาณ ฿79/เดือน (ปกติ ฿149/เดือน)
 featured: true
+archived: false
 lastVerified: 2026-10-30
 ---
 

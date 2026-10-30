@@ -11,6 +11,7 @@ eligibility:
   method: other
   notes: ต้องเป็นสมาชิก Apple Music แบบนักศึกษา
 includedIn: [apple-music-student]
+archived: false
 lastVerified: 2026-10-31
 ---
 

@@ -13,6 +13,7 @@ eligibility:
   notes: เฉพาะมหาวิทยาลัยที่อยู่ใน World Higher Education Database ไม่รวมนักเรียนระดับ K-12 และไม่รับบัตรนักศึกษา
 includedIn: [github-student-developer-pack]
 featured: true
+archived: false
 lastVerified: 2026-10-30
 ---
 

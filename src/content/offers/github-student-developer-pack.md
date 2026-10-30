@@ -12,6 +12,7 @@ eligibility:
   method: student-id
   notes: อายุ 13 ปีขึ้นไป และกำลังเรียนในหลักสูตรที่ได้วุฒิ (รวมถึง ม.ปลาย)
 featured: true
+archived: false
 lastVerified: 2026-10-30
 ---
 
