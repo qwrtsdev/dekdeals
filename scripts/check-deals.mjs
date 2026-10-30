@@ -109,34 +109,35 @@ for (const deal of deals) {
 	}
 }
 
-const lines = [`<!-- deal-health-state ${JSON.stringify(nextSeen)} -->`, `## 🩺 เช็คสถานะข้อมูล · ${today}`, ""];
+const mediaName = { image: "รูปพื้นหลัง", icon: "ไอคอน" };
+const lines = [`<!-- deal-health-state ${JSON.stringify(nextSeen)} -->`, `## 🩺 เช็กสถานะดีล · ${today}`, ""];
 const section = (title, items) => {
 	if (items.length) lines.push(`### ${title}`, ...items, "");
 };
 
 section(
-	"🚫 ลิงก์หลักไม่สามารถใช้งานได้ (404/410)",
+	"🚫 ลิงก์หน้าทางการใช้ไม่ได้ (404/410)",
 	gone.map(({ slug, url, urlStatus, since }) =>
 		archived.includes(slug)
-			? `- \`${slug}\` ${urlStatus.code} since ${since}: **archive PR opened**. If the page only moved, fix \`officialUrl\` instead of merging. ${url}`
-			: `- \`${slug}\` ${urlStatus.code} since ${since}: will be archived next week if it still fails. ${url}`,
+			? `- \`${slug}\` ${urlStatus.code} ตั้งแต่ ${since}: **เปิด PR ปิดเว็บนี้แล้ว** ถ้าหน้าแค่ย้ายที่ ให้แก้ \`officialUrl\` แทนการ merge · ${url}`
+			: `- \`${slug}\` ${urlStatus.code} ตั้งแต่ ${since}: ถ้าสัปดาห์หน้ายังเสีย จะเปิด PR เว็บดีลนี้ · ${url}`,
 	),
 );
 section(
-	"⚠️ เช็กอัตโนมัติไม่ได้ (403/429/5xx/timeout) กรุณาลองเปิดดูด้วยตัวเองในเบราว์เซอร์",
-	unknown.map(({ slug, url, urlStatus }) => `- \`${slug}\` ${urlStatus.code}: ${url}`),
+	"⚠️ เช็กอัตโนมัติไม่ได้ (403/429/5xx/timeout): ให้ลองเปิดลิงก์ในเบราว์เซอร์ด้วยตัวเอง",
+	unknown.map(({ slug, url, urlStatus }) => `- \`${slug}\` ${urlStatus.code} · ${url}`),
 );
 section(
-	"⚠️ รูปพื้นหลัง/ไอคอนเสีย",
+	"🖼️ รูปพื้นหลัง/ไอคอนเสีย",
 	brokenMedia.map(({ deal, name, result }) =>
 		refreshed.includes(`${deal.slug}/${name}`)
-			? `- \`${deal.slug}\` ${name} ${result.code}: **refreshed in the bot PR**. ${deal[name]}`
-			: `- \`${deal.slug}\` ${name} ${result.code}: ลบบรรทัดนั้นแล้วรัน \`npm run og\` ถ้ายังเสีย. ${deal[name]}`,
+			? `- \`${deal.slug}\` ${mediaName[name]} ${result.code}: **หาใหม่ให้แล้วใน PR ของบอต** · ${deal[name]}`
+			: `- \`${deal.slug}\` ${mediaName[name]} ${result.code}: เช็กอัตโนมัติไม่ได้ ถ้ายังเสียให้ลบบรรทัด \`${name}:\` แล้วรัน \`npm run og\` · ${deal[name]}`,
 	),
 );
 section(
-	`⚠️ ไม่ได้ตรวจสอบนานกว่า ${STALE_DAYS} วัน เช็กหน้าทางการแล้วอัปเดตข้อมูล \`lastVerified\``,
-	stale.map(({ slug, lastVerified }) => `- \`${slug}\` (lastVerified ${lastVerified})`),
+	`🕰️ ไม่ได้ตรวจสอบนานกว่า ${STALE_DAYS} วัน: เช็กหน้าทางการแล้วอัปเดต \`lastVerified\``,
+	stale.map(({ slug, lastVerified }) => `- \`${slug}\` (ตรวจสอบล่าสุด ${lastVerified})`),
 );
 
 const problems = gone.length + unknown.length + brokenMedia.length + stale.length > 0;

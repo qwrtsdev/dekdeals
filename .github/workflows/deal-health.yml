@@ -54,14 +54,14 @@ jobs:
           branch: bot/deal-updates
           add-paths: src/content/offers/*.md
           commit-message: "chore(content): update deals from health check"
-          title: "Deal updates from health check"
+          title: "อัปเดตข้อมูลจากการเช็กสถานะ"
           body: |
-            Archived (official page 404/410 two weeks in a row): `${{ steps.check.outputs.archived || 'none' }}`
-            Dead image/icon replaced: `${{ steps.check.outputs.refreshed || 'none' }}`
-            New images/icons for deals that had none: see the diff.
+            - เว็บที่ปิด (response 404/410 สองสัปดาห์ติดกัน): `${{ steps.check.outputs.archived || 'ไม่มี' }}`
+            - รูปพื้นหลัง/ไอคอนที่เสียหายและโหลดใหม่แล้ว: `${{ steps.check.outputs.refreshed || 'ไม่มี' }}`
+            - เว็บใหม่ที่เพิ่งได้รูปพื้นหลัง/ไอคอน: ดูใน diff
 
-            Before merging, open archived deals' links in a browser. If a page only moved,
-            drop that file from this PR and update `officialUrl` instead.
+            แนะนำ : ก่อน merge ให้เปิดลิงก์ของเว็บที่ถูก Archived ในเบราว์เซอร์ก่อน
+            ถ้าหน้าแค่ย้ายตำแหน่ง ให้เอาไฟล์นั้นออกจาก PR นี้ แล้วแก้ `officialUrl` แทน
 
       - name: Update the health issue
         env:
@@ -73,9 +73,9 @@ jobs:
             if [ -n "$NUMBER" ]; then
               gh issue edit "$NUMBER" --body-file "$report"
             else
-              gh label create deal-health --color FB923C --description "Weekly deal check" --force
-              gh issue create --title "🩺 Deal health" --label deal-health --body-file "$report"
+              gh label create deal-health --color FB923C --description "เช็กสถานะเว็บแบบรายสัปดาห์" --force
+              gh issue create --title "🩺 เช็กสถานะเว็บไซต์" --label deal-health --body-file "$report"
             fi
           elif [ -n "$NUMBER" ]; then
-            gh issue close "$NUMBER" --comment "All deals look healthy ✅"
+            gh issue close "$NUMBER" --comment "เว็บทั้งหมดปกติดี ✅"
           fi
