@@ -10,7 +10,7 @@ export const categories = {
 } as const;
 
 export const conditionals = {
-	"email": "ต้องยืนยันอีเมล์",
+	"email": "ยืนยันอีเมล์",
 	isic: "ต้องใช้บัตร ISIC",
 	sheerid: "ยืนยันผ่าน SheerID",
 	unidays: "ยืนยันผ่าน UNiDAYS",

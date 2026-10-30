@@ -2,13 +2,16 @@
 import Layout from "@/layouts/Layout.astro";
 import DealCard from "@/components/DealCard.astro";
 import { getCollection } from "astro:content";
-import { categories } from "@/lib/labels";
+import { categories, conditionals } from "@/lib/labels";
 import { Search, SearchX } from "@lucide/astro";
 
 const deals = (await getCollection("offers")).sort((a, b) =>
 	a.data.provider.localeCompare(b.data.provider),
 );
 const usedCategories = [...new Set(deals.map((d) => d.data.category))];
+const usedMethods = [
+	...new Set(deals.map((d) => d.data.eligibility.method)),
+];
 
 // What the client-side fuzzy search looks at for each deal.
 const searchIndex = deals.map(({ id, data }) => ({
@@ -18,6 +21,7 @@ const searchIndex = deals.map(({ id, data }) => ({
 	summaryTh: data.summary.th,
 	summaryEn: data.summary.en,
 	category: categories[data.category],
+	method: conditionals[data.eligibility.method],
 }));
 
 const chipClass =
@@ -55,7 +59,7 @@ const chipClass =
 		<div
 			class="mt-4 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none]"
 			role="group"
-			aria-label="หมวดหมู่"
+			aria-label="ตัวกรอง"
 		>
 			<button type="button" data-category="" class={chipClass}>
 				ทั้งหมด
@@ -67,6 +71,15 @@ const chipClass =
 					</button>
 				))
 			}
+			<!-- divider between category chips and verification-method chips -->
+			<span aria-hidden="true" class="mx-1 my-1 w-px shrink-0 bg-line"></span>
+			{
+				usedMethods.map((m) => (
+					<button type="button" data-method={m} class={chipClass}>
+						{conditionals[m]}
+					</button>
+				))
+			}
 		</div>
 
 		<ul data-deals class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -75,6 +88,7 @@ const chipClass =
 					<li
 						data-deal-id={deal.id}
 						data-category={deal.data.category}
+						data-method={deal.data.eligibility.method}
 					>
 						<DealCard deal={deal} />
 					</li>
@@ -120,6 +134,7 @@ const chipClass =
 			{ name: "name", weight: 2 },
 			"tags",
 			"category",
+			"method",
 			"summaryTh",
 			"summaryEn",
 		],
@@ -133,14 +148,17 @@ const chipClass =
 	const input = form.querySelector<HTMLInputElement>("input")!;
 	const list = document.querySelector<HTMLUListElement>("[data-deals]")!;
 	const items = [...list.querySelectorAll<HTMLLIElement>("[data-deal-id]")];
-	const chips = document.querySelectorAll<HTMLButtonElement>(
+	const categoryChips = document.querySelectorAll<HTMLButtonElement>(
 		"button[data-category]",
 	);
+	const methodChips =
+		document.querySelectorAll<HTMLButtonElement>("button[data-method]");
 	const count = document.querySelector("[data-count]")!;
 	const empty = document.querySelector<HTMLElement>("[data-empty]")!;
 
 	const params = new URLSearchParams(location.search);
 	let category = params.get("category") ?? "";
+	let method = params.get("method") ?? "";
 	input.value = params.get("q") ?? "";
 
 	function apply() {
@@ -155,7 +173,8 @@ const chipClass =
 		for (const li of items) {
 			const ok =
 				rank.has(li.dataset.dealId!) &&
-				(!category || li.dataset.category === category);
+				(!category || li.dataset.category === category) &&
+				(!method || li.dataset.method === method);
 			li.hidden = !ok;
 			if (ok) shown++;
 		}
@@ -171,11 +190,14 @@ const chipClass =
 
 		count.textContent = String(shown);
 		empty.hidden = shown > 0;
-		chips.forEach((chip) =>
+		categoryChips.forEach((chip) =>
 			chip.setAttribute(
 				"aria-pressed",
 				String(chip.dataset.category === category),
 			),
+		);
+		methodChips.forEach((chip) =>
+			chip.setAttribute("aria-pressed", String(chip.dataset.method === method)),
 		);
 
 		const url = new URL(location.href);
@@ -183,6 +205,9 @@ const chipClass =
 		category
 			? url.searchParams.set("category", category)
 			: url.searchParams.delete("category");
+		method
+			? url.searchParams.set("method", method)
+			: url.searchParams.delete("method");
 		history.replaceState(null, "", url);
 	}
 
@@ -191,9 +216,16 @@ const chipClass =
 		event.preventDefault();
 		apply();
 	});
-	chips.forEach((chip) =>
+	categoryChips.forEach((chip) =>
 		chip.addEventListener("click", () => {
 			category = chip.dataset.category ?? "";
+			apply();
+		}),
+	);
+	// method chips toggle: clicking the selected one clears it
+	methodChips.forEach((chip) =>
+		chip.addEventListener("click", () => {
+			method = method === chip.dataset.method ? "" : chip.dataset.method!;
 			apply();
 		}),
 	);
