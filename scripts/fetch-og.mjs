@@ -7,7 +7,7 @@ const dir = new URL("../src/content/offers/", import.meta.url);
 const headers = { "user-agent": "Mozilla/5.0 (compatible; dekdeals-og)" };
 
 const attr = (tag, name) =>
-	tag.match(new RegExp(`${name}=["']([^"']+)["']`, "i"))?.[1]?.replaceAll("&amp;", "&");
+	tag.match(new RegExp(`${name}=["']([^"']+)["']`, "i"))?.[1]?.replace(/&(amp|#38|#x26);/gi, "&");
 
 function findImage(html) {
 	const tag = html.match(/<meta[^>]+(?:property|name)=["']og:image["'][^>]*>/i)?.[0];
