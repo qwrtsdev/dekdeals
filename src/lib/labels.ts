@@ -16,7 +16,7 @@ export const conditionals = {
 	sheerid: "ยืนยันผ่าน SheerID",
 	"student-id": "ยืนยันผ่านบัตรนักศึกษา",
 	other: "ยืนยันสถานะนักศึกษา",
-	none: "ไม่ต้องยืนยันสถานะ",
+	none: "ไม่ต้องยืนยัน",
 } as const;
 
 type Category = keyof typeof categories;
