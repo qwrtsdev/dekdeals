@@ -6,6 +6,9 @@ export const categories = {
 	software: "ซอฟต์แวร์",
 	entertainment: "ความบันเทิง",
 	productivity: "การทำงาน",
+	design: "ดีไซน์",
+	cloud: "คลาวด์ & เว็บ",
+	hardware: "อุปกรณ์",
 } as const;
 
 export const conditionals = {
@@ -13,6 +16,7 @@ export const conditionals = {
 	sheerid: "ยืนยันผ่าน SheerID",
 	"student-id": "ยืนยันผ่านบัตรนักศึกษา",
 	other: "ยืนยันสถานะนักศึกษา",
+	none: "ไม่ต้องยืนยันสถานะ",
 } as const;
 
 type Category = keyof typeof categories;
