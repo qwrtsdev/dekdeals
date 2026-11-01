@@ -13,23 +13,25 @@
 	--color-faint: var(--faint);
 }
 
-:root {
+:root,
+.dark .theme-light {
+	color-scheme: light;
 	--page: #fafafa;
 	--surface: #ffffff;
 	--subtle: #f5f5f5;
 	--line: #e5e5e5;
-	--ink: #171717;
+	--ink: #0a0a0a;
 	--muted: #525252;
 	--faint: #737373;
 }
 
 .dark {
 	color-scheme: dark;
-	--page: #171717;
-	--surface: #262626;
+	--page: #0a0a0a;
+	--surface: #171717;
 	--subtle: rgb(255 255 255 / 0.06);
 	--line: rgb(255 255 255 / 0.1);
-	--ink: #ffffff;
+	--ink: #fafafa;
 	--muted: #d4d4d4;
 	--faint: #a3a3a3;
 }
@@ -45,43 +47,119 @@ body::-webkit-scrollbar {
 	display: none;
 }
 
-:root {
-	--color-orange-50: #fff7ed;
-	--color-orange-100: #ffedd5;
-	--color-orange-200: #fed7aa;
-	--color-orange-500: #f97316;
-	--color-orange-600: #ea580c;
-	--color-orange-700: #c2410c;
-	--color-orange-900: #7c2d12;
+@layer base {
+	::selection {
+		background: var(--color-orange-400);
+		color: var(--color-neutral-950);
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--color-orange-400);
+		outline-offset: 2px;
+	}
+
+	h1,
+	h2 {
+		text-wrap: balance;
+	}
+
+	h3,
+	p {
+		text-wrap: pretty;
+	}
 }
 
-.text-brand {
-	color: var(--color-orange-400);
+@layer components {
+	.btn-brand {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		border-radius: 0.75rem;
+		background: var(--color-orange-400);
+		color: var(--color-neutral-950);
+		font-weight: 600;
+		box-shadow: 0 3px 0 var(--color-orange-600);
+		transition:
+			background-color 150ms,
+			translate 100ms,
+			box-shadow 100ms;
+	}
+
+	.btn-brand:hover {
+		background: var(--color-orange-300);
+	}
+
+	.btn-brand:active {
+		translate: 0 3px;
+		box-shadow: 0 0 0 var(--color-orange-600);
+	}
 }
 
-.text-brand-dark {
-	color: var(--color-orange-700);
+@keyframes rise {
+	from {
+		opacity: 0;
+		translate: 0 0.75rem;
+	}
 }
 
-.bg-brand {
-	background-color: var(--color-orange-600);
+@keyframes marker {
+	from {
+		background-size: 0% 100%;
+	}
 }
 
-.bg-brand-soft {
-	background-color: var(--color-orange-100);
+@media (prefers-reduced-motion: no-preference) {
+	@view-transition {
+		navigation: auto;
+	}
+
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation-duration: 200ms;
+	}
+
+	.rise {
+		animation: rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+		animation-delay: calc(var(--i, 0) * 80ms);
+	}
+
+	.marker {
+		animation: marker 700ms cubic-bezier(0.65, 0, 0.35, 1) 300ms both;
+	}
+
+	@supports (animation-timeline: view()) {
+		.reveal {
+			animation: rise linear both;
+			animation-timeline: view();
+			animation-range: entry 0% entry 40%;
+		}
+	}
 }
 
-.border-brand {
-	border-color: var(--color-orange-200);
+.vt-navbar {
+	view-transition-name: navbar;
 }
 
-.brand-shadow {
-	box-shadow: 0 20px 25px -5px rgb(234 88 12 / 0.2);
+.theme-switching .vt-navbar {
+	backdrop-filter: none;
 }
 
-.font-noto-sans-thai {
-	font-family: var(--font-noto-sans-thai), sans-serif;
+.theme-switching::view-transition-group(navbar),
+.theme-switching::view-transition-new(navbar) {
+	animation: none;
 }
+
+.theme-switching::view-transition-old(navbar) {
+	display: none;
+}
+
+.theme-switching::view-transition-old(root),
+.theme-switching::view-transition-new(root) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
 /* Markdown body of a deal page (src/pages/deals/[slug].astro) */
 .deal-prose {
 	max-width: 70ch;
