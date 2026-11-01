@@ -15,7 +15,6 @@ const usedMethods = [
 	...new Set(deals.map((d) => d.data.eligibility.method)),
 ];
 
-// What the client-side fuzzy search looks at for each deal.
 const searchIndex = deals.map(({ id, data }) => ({
 	id,
 	name: data.name,
@@ -27,16 +26,18 @@ const searchIndex = deals.map(({ id, data }) => ({
 }));
 
 const chipClass =
-	"shrink-0 rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium text-muted transition hover:border-orange-400/60 hover:text-ink aria-pressed:border-orange-400 aria-pressed:bg-orange-400 aria-pressed:text-white";
+	"shrink-0 rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium text-muted transition hover:border-orange-400/70 hover:text-ink active:scale-95 aria-pressed:border-orange-400 aria-pressed:bg-orange-400 aria-pressed:text-neutral-950";
 ---
 
 <Layout title="ดีลทั้งหมด">
 	<main class="mx-auto max-w-6xl px-6 pb-20 pt-12">
-		<h1 class="text-3xl font-black tracking-tight sm:text-4xl">
-			ดีลทั้งหมด (<span data-count class="font-semibold text-ink"
+		<h1 class="flex items-center gap-3 text-3xl font-black sm:text-4xl">
+			ดีลทั้งหมด
+			<span
+				data-count
+				class="rounded-xl bg-orange-400 px-2.5 py-0.5 text-lg font-bold tabular-nums text-neutral-950 sm:text-xl"
 				>{deals.length}</span
 			>
-			)
 		</h1>
 
 		<form
@@ -52,6 +53,7 @@ const chipClass =
 				id="deals-q"
 				name="q"
 				type="search"
+				enterkeyhint="search"
 				autocomplete="off"
 				placeholder="ค้นหาชื่อแบรนด์ หรือแท็ก..."
 				class="min-w-0 flex-1 bg-transparent py-3.5 text-base text-ink outline-none placeholder:text-faint"
@@ -59,7 +61,7 @@ const chipClass =
 		</form>
 
 		<div
-			class="mt-4 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none]"
+			class="mt-4 flex gap-2 overflow-x-auto pb-2 pr-10 [mask-image:linear-gradient(to_right,black_calc(100%_-_2.5rem),transparent)] [scrollbar-width:none]"
 			role="group"
 			aria-label="ตัวกรอง"
 		>
@@ -73,7 +75,6 @@ const chipClass =
 					</button>
 				))
 			}
-			<!-- divider between category chips and verification-method chips -->
 			<span aria-hidden="true" class="mx-1 my-1 w-px shrink-0 bg-line"></span>
 			{
 				usedMethods.map((m) => (
@@ -88,6 +89,7 @@ const chipClass =
 			{
 				deals.map((deal) => (
 					<li
+						class="reveal"
 						data-deal-id={deal.id}
 						data-category={deal.data.category}
 						data-method={deal.data.eligibility.method}
@@ -110,7 +112,8 @@ const chipClass =
 					href="https://github.com/qwrtsdev/dekdeals/issues/new"
 					target="_blank"
 					rel="noopener"
-					class="text-orange-400 underline">เสนอดีลนี้ให้เรา</a
+					class="font-medium text-orange-600 underline underline-offset-4 dark:text-orange-400"
+					>เสนอดีลนี้ให้เรา</a
 				>
 			</p>
 		</div>
@@ -164,7 +167,6 @@ const chipClass =
 
 	function apply() {
 		const q = input.value.trim();
-		// Best match first while searching, original order otherwise.
 		const order = q
 			? fuse.search(q).map((r) => r.item.id)
 			: items.map((li) => li.dataset.dealId!);
@@ -217,17 +219,30 @@ const chipClass =
 		event.preventDefault();
 		apply();
 	});
+	function applyAnimated() {
+		if (
+			!document.startViewTransition ||
+			matchMedia("(prefers-reduced-motion: reduce)").matches
+		)
+			return apply();
+		const name = (li: HTMLLIElement, on: boolean) =>
+			(li.style.viewTransitionName = on ? `deal-${li.dataset.dealId}` : "");
+		items.forEach((li) => name(li, true));
+		document
+			.startViewTransition(apply)
+			.finished.finally(() => items.forEach((li) => name(li, false)));
+	}
+
 	categoryChips.forEach((chip) =>
 		chip.addEventListener("click", () => {
 			category = chip.dataset.category ?? "";
-			apply();
+			applyAnimated();
 		}),
 	);
-	// method chips toggle: clicking the selected one clears it
 	methodChips.forEach((chip) =>
 		chip.addEventListener("click", () => {
 			method = method === chip.dataset.method ? "" : chip.dataset.method!;
-			apply();
+			applyAnimated();
 		}),
 	);
 	apply();

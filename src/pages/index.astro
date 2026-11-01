@@ -3,24 +3,35 @@ import HeroASCII from "@/components/HeroASCII.jsx";
 import Layout from "@/layouts/Layout.astro";
 import DealCard from "@/components/DealCard.astro";
 import { getCollection } from "astro:content";
-import { ArrowRight, MessageSquarePlus, Search } from "@lucide/astro";
+import { categories } from "@/lib/labels";
+import { ArrowRight, MessageSquarePlus, Search, Star } from "@lucide/astro";
 
 const deals = await getCollection("offers");
-const featured = deals.filter(({ data }) => data.featured && !data.archived);
+const active = deals.filter(({ data }) => !data.archived);
+const featured = active.filter(({ data }) => data.featured);
+const usedCategories = [...new Set(active.map(({ data }) => data.category))];
 const suggestUrl = "https://github.com/qwrtsdev/dekdeals/issues/new";
+const repoUrl = "https://github.com/qwrtsdev/dekdeals";
+
+const stars: number | undefined = await fetch(
+	"https://api.github.com/repos/qwrtsdev/dekdeals",
+	{ signal: AbortSignal.timeout(5000) },
+)
+	.then((res) => (res.ok ? res.json() : undefined))
+	.then((repo) => repo?.stargazers_count)
+	.catch(() => undefined);
 ---
 
 <Layout>
 	<main>
 		<section
-			class="relative isolate z-10 px-6 pb-0 pt-20 sm:pb-24 sm:pt-28"
+			class="relative isolate z-10 px-6 pb-0 pt-20 sm:pb-10 sm:pt-28"
 		>
-			<!-- ASCII art: starts behind the navbar (-top-20), bleeds 11rem below the hero, then fades into the page -->
 			<div
-				class="pointer-events-none absolute inset-x-0 -top-20 z-[-1] h-[calc(100%+16rem)] [mask-image:linear-gradient(to_bottom,black_calc(100%_-_8rem),transparent)]"
+				class="pointer-events-none absolute inset-x-0 -top-20 z-[-1] h-[calc(100%+16rem)] sm:h-[calc(100%+19.5rem)] [mask-image:linear-gradient(to_bottom,black_calc(100%_-_8rem),transparent)]"
 			>
 				<HeroASCII
-					client:load
+					client:idle
 					className="absolute! inset-0!"
 					shape="horizon"
 					gradientOpacity={1}
@@ -29,76 +40,149 @@ const suggestUrl = "https://github.com/qwrtsdev/dekdeals/issues/new";
 					style={undefined}
 				/>
 				<div
-					class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(250_250_250/0.75),transparent_65%)] dark:bg-[radial-gradient(ellipse_at_center,rgb(23_23_23/0.7),transparent_65%)]"
+					class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(250_250_250/0.75),transparent_65%)] dark:bg-[radial-gradient(ellipse_at_center,rgb(10_10_10/0.75),transparent_65%)]"
 				>
 				</div>
 			</div>
 
 			<div class="mx-auto max-w-3xl text-center">
-				<h1 class="tracking-tight drop-shadow-md">
+				<h1>
 					<span
-						class="block text-4xl font-bold text-neutral-100 sm:text-5xl [-webkit-text-stroke:4px_black] [paint-order:stroke_fill]"
+						class="rise block text-2xl font-bold text-ink sm:text-4xl"
 						>เพราะเป็นนักศึกษาทั้งที</span
 					>
 					<span
-						class="mt-1 block text-5xl font-black leading-[1.2] text-orange-400 [-webkit-text-stroke:6px_white] [paint-order:stroke_fill] sm:text-7xl lg:text-8xl"
-						>ต้องใช้ให้คุ้ม</span
+						class="rise mt-3 block text-5xl font-black leading-[1.35] sm:text-7xl lg:text-8xl"
+						style="--i: 1"
 					>
+						<span
+							class="marker inline-block -rotate-1 rounded-xl bg-[linear-gradient(var(--color-orange-400),var(--color-orange-400))] bg-no-repeat [background-size:100%_100%] px-3 text-neutral-950"
+							>ต้องใช้ให้คุ้ม</span
+						>
+					</span>
 				</h1>
-				<p class="mx-auto mt-5 max-w-xl text-base leading-7 sm:text-lg">
-					เรารวบรวมดีลจากแบรนด์ดังที่ใช้สิทธิ์นักศึกษา
-				</p>
 				<p
-					class="text-lg font-semibold text-ink underline decoration-orange-400 decoration-wavy decoration-2 underline-offset-[6px]"
+					class="rise mx-auto mt-6 max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8"
+					style="--i: 2"
 				>
-					เพื่อมอบความคุ้มขั้นสุดให้คุณ
+					เรารวบรวมดีลจากแบรนด์ดังที่ใช้สิทธิ์นักศึกษา<br />
+					<span
+						class="font-semibold text-ink underline decoration-orange-400 decoration-wavy decoration-2 underline-offset-[6px]"
+						>เพื่อมอบความคุ้มขั้นสุดให้คุณ</span
+					>
 				</p>
 
 				<form
 					action="/deals"
 					method="get"
 					role="search"
-					class="mx-auto mt-8 flex max-w-xl items-center gap-2 rounded-2xl bg-white p-2 shadow-2xl ring-1 shadow-orange-950/20 ring-black/5 dark:shadow-orange-950/40"
+					class="rise mx-auto mt-8 flex max-w-xl items-center gap-2 rounded-2xl border border-line bg-surface p-2 shadow-xl shadow-orange-950/10 transition focus-within:border-orange-400 focus-within:ring-4 focus-within:ring-orange-400/15 dark:shadow-black/40"
+					style="--i: 3"
 				>
 					<label for="hero-search" class="sr-only">ค้นหาดีล</label>
 					<Search
 						size={20}
 						stroke-width={2}
-						class="ml-3 shrink-0 text-slate-400"
+						class="ml-3 shrink-0 text-faint"
 					/>
 					<input
 						id="hero-search"
 						name="q"
 						type="search"
-						placeholder="ค้นหาชื่อแบรนด์..."
-						class="min-w-0 flex-1 bg-transparent py-2 text-base text-slate-950 outline-none placeholder:text-slate-400"
+						enterkeyhint="search"
+						placeholder={`ค้นหาจาก ${active.length} ดีล...`}
+						class="min-w-0 flex-1 bg-transparent py-2 text-base text-ink outline-none placeholder:text-faint [&::-webkit-search-cancel-button]:hidden"
 					/>
 					<button
 						type="submit"
-						class="shrink-0 rounded-xl bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+						class="btn-brand shrink-0 px-5 py-2.5 text-sm"
 					>
 						ค้นหา
 					</button>
 				</form>
+
+				<ul
+					class="rise mx-auto mt-5 flex max-w-xl flex-wrap justify-center gap-2 text-sm"
+					style="--i: 4"
+					aria-label="หมวดหมู่"
+				>
+					{
+						usedCategories.map((c) => (
+							<li>
+								<a
+									href={`/deals?category=${c}`}
+									class="block rounded-full border border-line bg-surface/70 px-3.5 py-1.5 text-muted backdrop-blur-sm transition hover:border-orange-400 hover:text-ink active:scale-95"
+								>
+									{categories[c]}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+
+				<p
+					class="rise mt-6 flex items-center justify-center gap-3 text-sm text-muted"
+					style="--i: 5"
+				>
+					{
+						stars !== undefined && (
+							<>
+								<a
+									href={`${repoUrl}/stargazers`}
+									target="_blank"
+									rel="noopener"
+									class="group inline-flex items-center gap-1.5 tabular-nums transition-colors hover:text-ink"
+								>
+									<Star
+										size={15}
+										stroke-width={2}
+										class="text-orange-400 transition-transform duration-300 group-hover:rotate-[72deg] group-hover:fill-current"
+									/>
+									{stars.toLocaleString()} ดาว
+								</a>
+								<span aria-hidden="true" class="text-faint">
+									·
+								</span>
+							</>
+						)
+					}
+					<a
+						href={repoUrl}
+						target="_blank"
+						rel="noopener"
+						class="inline-flex items-center gap-1.5 underline decoration-line underline-offset-4 transition-colors hover:text-ink hover:decoration-orange-400"
+					>
+						<svg
+							viewBox="0 0 16 16"
+							aria-hidden="true"
+							class="size-4 fill-current"
+						>
+							<path
+								d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"
+							></path>
+						</svg>
+						ดูโปรเจคบน GitHub
+					</a>
+				</p>
 			</div>
 		</section>
 
 		<section
-			class="relative z-20 mx-auto max-w-6xl px-6 6xl:px-0 pb-6 pt-20"
+			class="relative z-20 mx-auto max-w-6xl px-6 pb-6 pt-16"
 		>
 			<div class="flex items-end justify-between gap-4">
-				<h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
+				<h2 class="text-2xl font-bold sm:text-3xl">
 					ดีลดีที่อยากแนะนำ
 				</h2>
 				<a
 					href="/deals"
-					class="group inline-flex shrink-0 items-center gap-1 text-sm text-muted transition hover:text-orange-400"
+					class="group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted transition-colors hover:text-orange-400"
 				>
 					อ่านทั้งหมด
 					<ArrowRight
 						size={16}
 						stroke-width={2}
-						class="transition group-hover:translate-x-0.5"
+						class="transition-transform group-hover:translate-x-1"
 					/>
 				</a>
 			</div>
@@ -106,7 +190,7 @@ const suggestUrl = "https://github.com/qwrtsdev/dekdeals/issues/new";
 			<ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 				{
 					featured.map((deal) => (
-						<li>
+						<li class="reveal">
 							<DealCard deal={deal} />
 						</li>
 					))
@@ -114,22 +198,19 @@ const suggestUrl = "https://github.com/qwrtsdev/dekdeals/issues/new";
 			</ul>
 		</section>
 
-		<!-- every deal is rendered hidden; the script below shows the ones in this browser's favorites -->
 		<section
 			data-fav-section
 			hidden
 			class="relative z-20 mx-auto max-w-6xl px-6 pt-20"
 		>
-			<h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
-				ดีลที่คุณชอบ
-			</h2>
+			<h2 class="text-2xl font-bold sm:text-3xl">ดีลที่คุณชอบ</h2>
 			<ul
 				data-fav-list
 				class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
 			>
 				{
 					deals.map((deal) => (
-						<li data-deal-id={deal.id} hidden>
+						<li data-deal-id={deal.id} hidden class="reveal">
 							<DealCard deal={deal} />
 						</li>
 					))
@@ -137,16 +218,21 @@ const suggestUrl = "https://github.com/qwrtsdev/dekdeals/issues/new";
 			</ul>
 		</section>
 
-		<section class="mx-auto max-w-6xl px-6 py-20">
+		<section class="reveal mx-auto max-w-6xl px-6 py-20">
 			<div
-				class="flex flex-col items-start gap-6 rounded-xl bg-orange-400 p-6 sm:p-8 md:flex-row md:items-center md:justify-between"
+				class="relative isolate flex flex-col items-start gap-6 overflow-hidden rounded-2xl bg-orange-400 p-6 text-neutral-950 sm:p-10 md:flex-row md:items-center md:justify-between"
 			>
+				<span
+					aria-hidden="true"
+					class="pointer-events-none absolute -bottom-24 -right-6 -z-10 text-[24rem] font-black leading-none text-orange-300 select-none sm:-bottom-20 sm:-right-4 sm:text-[18rem]"
+					>?</span
+				>
 				<div>
-					<h2 class="text-2xl font-bold text-white sm:text-3xl">
+					<h2 class="text-2xl font-bold sm:text-3xl">
 						ไม่มีดีลที่ต้องการเหรอ?
 					</h2>
-					<p class="mt-2 text-orange-50">
-						อาจจะมีแต่เราไม่รู้เองก็ได้นะ TT<br />
+					<p class="mt-2 leading-7 text-neutral-950/75">
+						อาจจะมีแต่เราไม่รู้เองก็ได้นะ<br />
 						มาร่วมช่วย Contribute โปรเจคนี้ให้ดีขึ้นกว่าเดิมได้เลย!
 					</p>
 				</div>
@@ -154,9 +240,13 @@ const suggestUrl = "https://github.com/qwrtsdev/dekdeals/issues/new";
 					href={suggestUrl}
 					target="_blank"
 					rel="noopener"
-					class="inline-flex shrink-0 items-center gap-2 rounded-xl bg-neutral-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800"
+					class="group inline-flex shrink-0 items-center gap-2 rounded-xl bg-neutral-950 px-5 py-3 text-sm font-semibold text-neutral-50 transition hover:bg-neutral-800 active:scale-95 focus-visible:outline-neutral-950"
 				>
-					<MessageSquarePlus size={18} stroke-width={2} />
+					<MessageSquarePlus
+						size={18}
+						stroke-width={2}
+						class="transition-transform group-hover:-rotate-12"
+					/>
 					ส่ง Issues บน GitHub
 				</a>
 			</div>

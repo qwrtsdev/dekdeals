@@ -25,7 +25,7 @@ const {
 			href="/favicon.ico"
 			sizes="96x96"
 		/>
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
 		<title>{title ? `${title} - DekDeals` : "DekDeals"}</title>
@@ -43,14 +43,15 @@ const {
 			);
 		</script>
 	</head>
-	<body class="min-h-screen bg-page text-ink antialiased">
+	<body class="flex min-h-dvh flex-col bg-page text-ink antialiased">
 		<Analytics />
-		<div class="sticky top-0 z-50">
+		<div class="vt-navbar sticky top-0 z-50">
 			<Navbar />
 		</div>
-		<slot />
-		<footer class="relative isolate overflow-hidden border-t border-line">
-			<!-- grey lines read on both themes, so the grid doesn't need to track the theme -->
+		<div><slot /></div>
+		<footer
+			class="relative isolate flex-1 overflow-hidden border-t border-line"
+		>
 			<ShapeGrid
 				client:visible
 				className="pointer-events-none absolute! inset-x-0! -top-24! h-[calc(100%+12rem)]! z-[-1]"
@@ -59,21 +60,22 @@ const {
 				direction="diagonal"
 				speed={0.3}
 				lineColor="#a3a3a3"
-				hoverColor="#f97316"
+				hoverColor="#fb923c"
 				opacity={0.45}
 				fade={0.6}
 			/>
 			<div
-				class="mx-auto sm:flex max-w-6xl justify-between px-6 py-6 text-center"
+				class="mx-auto flex max-w-6xl flex-col items-center gap-1 px-6 py-8 text-sm text-muted sm:flex-row sm:justify-between"
 			>
-				<p class="text-sm">
-					made by <a
+				<p>
+					เว็บไซต์โดย <a
 						href="https://qwrts.dev/"
 						target="_blank"
-						class="underline">qwrtsdev</a
+						class="font-semibold text-ink underline decoration-orange-400 decoration-2 underline-offset-4 transition-colors hover:text-orange-400"
+						>qwrtsdev</a
 					>
 				</p>
-				<p class="text-sm sm:text-right">
+				<p class="text-center sm:text-right">
 					กรุณาตรวจสอบข้อมูลก่อนสมัครเสมอเพื่อความถูกต้อง
 				</p>
 			</div>

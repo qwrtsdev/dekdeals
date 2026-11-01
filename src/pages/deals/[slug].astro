@@ -29,7 +29,6 @@ const { offer } = Astro.props;
 const { data } = offer;
 const { Content } = await render(offer);
 
-// packs this deal is part of, and (the other way round) deals that list this one as their pack
 const includedIn = await getEntries(data.includedIn);
 const includes = await getCollection("offers", (other) =>
 	other.data.includedIn.some((ref) => ref.id === offer.id),
@@ -44,7 +43,6 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 ---
 
 <Layout title={`${data.provider} ${data.name}`} description={data.summary.th}>
-	<!-- og:image of the official page, starting behind the navbar and fading into the page -->
 	{
 		data.image && (
 			<div
@@ -63,22 +61,26 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 	<main class="mx-auto max-w-6xl px-6 py-12">
 		<a
 			href="/deals"
-			class="inline-flex items-center gap-1 text-sm font-semibold text-shadow-faint transition hover:text-orange-400"
+			class="rise group inline-flex items-center gap-1 text-sm font-semibold text-muted transition-colors hover:text-orange-400"
 		>
-			<ArrowLeft size={16} stroke-width={2} />
+			<ArrowLeft
+				size={16}
+				stroke-width={2}
+				class="transition-transform group-hover:-translate-x-1"
+			/>
 			ดูดีลทั้งหมด
 		</a>
 
-		<header class="mt-8 flex items-start gap-5 sm:gap-6">
+		<header class="rise mt-8 flex items-start gap-5 sm:gap-6" style="--i: 1">
 			<DealIcon
 				provider={data.provider}
 				icon={data.icon}
-				class="size-16 rounded-2xl text-2xl sm:size-20 sm:text-3xl"
+				class="size-16 rounded-2xl text-2xl shadow-lg ring-1 ring-line sm:size-20 sm:text-3xl"
 			/>
 			<div>
 				<p class="text-base font-medium text-faint">{data.provider}</p>
 				<h1
-					class="text-4xl font-black leading-tight tracking-tight sm:text-5xl"
+					class="text-4xl font-black leading-tight sm:text-5xl"
 				>
 					{data.name}
 				</h1>
@@ -93,11 +95,14 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 		<div
 			class="mt-12 grid gap-10 sm:mt-16 lg:grid-cols-[3fr_2fr] lg:items-start"
 		>
-			<aside class="space-y-4 lg:sticky lg:top-28 lg:order-2">
+			<aside
+				class="rise space-y-4 lg:sticky lg:top-28 lg:order-2"
+				style="--i: 2"
+			>
 				<div class="flex flex-wrap gap-2 text-sm">
 					<a
 						href={`/deals?category=${data.category}`}
-						class="inline-flex items-center gap-1.5 rounded-lg bg-orange-400/10 px-3 py-1.5 font-medium text-orange-400 transition hover:bg-orange-400/20"
+						class="inline-flex items-center gap-1.5 rounded-lg bg-orange-400/15 px-3 py-1.5 font-medium text-orange-700 transition hover:bg-orange-400/25 dark:text-orange-300"
 					>
 						<Tag size={14} stroke-width={2} />
 						{categories[data.category]}
@@ -127,7 +132,7 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 					</a>
 				</div>
 
-				<section class="rounded-2xl border border-line bg-surface p-6">
+				<section class="rounded-2xl border border-line bg-surface p-5 sm:p-6">
 					<dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
 						<div>
 							<dt class="text-xs font-medium text-faint">
@@ -167,10 +172,14 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 								href={data.officialUrl}
 								target="_blank"
 								rel="noopener noreferrer"
-								class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-400 px-5 py-3 font-semibold text-white transition hover:bg-orange-400/85"
+								class="btn-brand group mt-6 w-full px-5 py-3"
 							>
 								ไปหน้าทางการ
-								<ExternalLink size={18} stroke-width={2} />
+								<ExternalLink
+									size={18}
+									stroke-width={2}
+									class="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+								/>
 							</a>
 						)
 					}
@@ -182,7 +191,7 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 							data-save="favorites"
 							data-id={offer.id}
 							aria-pressed="false"
-							class="flex items-center justify-center gap-2 rounded-xl border border-line px-4 py-2.5 text-muted transition hover:border-pink-500/60 hover:text-pink-500 aria-pressed:border-pink-500 aria-pressed:bg-pink-500/10 aria-pressed:text-pink-600 dark:aria-pressed:text-pink-400 [&[aria-pressed=true]_svg]:fill-current"
+							class="flex items-center justify-center gap-2 rounded-xl border border-line px-4 py-2.5 text-muted transition hover:border-pink-500/60 active:scale-95 hover:text-pink-500 aria-pressed:border-pink-500 aria-pressed:bg-pink-500/10 aria-pressed:text-pink-600 dark:aria-pressed:text-pink-400 [&[aria-pressed=true]_svg]:fill-current"
 						>
 							<Heart size={18} stroke-width={2} />
 							รายการโปรด
@@ -192,7 +201,7 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 							data-save="done"
 							data-id={offer.id}
 							aria-pressed="false"
-							class="flex items-center justify-center gap-2 rounded-xl border border-line px-4 py-2.5 text-muted transition hover:border-emerald-500/60 hover:text-emerald-500 aria-pressed:border-emerald-500 aria-pressed:bg-emerald-500/10 aria-pressed:text-emerald-600 dark:aria-pressed:text-emerald-400 [&[aria-pressed=true]_svg]:fill-emerald-500/20"
+							class="flex items-center justify-center gap-2 rounded-xl border border-line px-4 py-2.5 text-muted transition hover:border-emerald-500/60 active:scale-95 hover:text-emerald-500 aria-pressed:border-emerald-500 aria-pressed:bg-emerald-500/10 aria-pressed:text-emerald-600 dark:aria-pressed:text-emerald-400 [&[aria-pressed=true]_svg]:fill-emerald-500/20"
 						>
 							<CircleCheck size={18} stroke-width={2} />
 							ใช้สิทธิ์แล้ว
@@ -201,7 +210,7 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 				</section>
 			</aside>
 
-			<div class="min-w-0 lg:order-1">
+			<div class="rise min-w-0 lg:order-1" style="--i: 3">
 				<article class="deal-prose">
 					<Content />
 				</article>
@@ -219,7 +228,7 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 									</h2>
 									<ul class="mt-4 grid gap-4 sm:grid-cols-2">
 										{deals.map((deal) => (
-											<li>
+											<li class="reveal">
 												<DealCard deal={deal} />
 											</li>
 										))}
@@ -255,10 +264,19 @@ const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encod
 			),
 		);
 
+	const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
 	buttons.forEach((button) =>
-		button.addEventListener("click", () =>
-			toggleSaved(button.dataset.save as SavedKind, button.dataset.id!),
-		),
+		button.addEventListener("click", () => {
+			toggleSaved(button.dataset.save as SavedKind, button.dataset.id!);
+			if (button.ariaPressed === "true" && !reduceMotion.matches)
+				button
+					.querySelector("svg")
+					?.animate([{ scale: 1 }, { scale: 1.35 }, { scale: 1 }], {
+						duration: 350,
+						easing: "ease-out",
+					});
+		}),
 	);
 	sync();
 	onSavedChange(sync);
