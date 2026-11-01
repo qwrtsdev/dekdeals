@@ -4,6 +4,7 @@ import DealCard from "@/components/DealCard.astro";
 import { getCollection } from "astro:content";
 import { categories, conditionals } from "@/lib/labels";
 import { issueUrl } from "@/lib/links";
+import { jsonScript } from "@/lib/format";
 import { Search, SearchX } from "@lucide/astro";
 
 const deals = (
@@ -123,12 +124,17 @@ const chipClass =
 	<script
 		type="application/json"
 		id="deals-index"
-		set:html={JSON.stringify(searchIndex).replace(/</g, "\\u003c")}
+		set:html={jsonScript(searchIndex)}
 	/>
 </Layout>
 
 <script>
 	import Fuse from "fuse.js";
+	import {
+		matchesFilters,
+		readFilters,
+		writeFilters,
+	} from "@/lib/dealFilter";
 
 	type Entry = { id: string };
 	const index: Entry[] = JSON.parse(
@@ -161,65 +167,53 @@ const chipClass =
 	const count = document.querySelector("[data-count]")!;
 	const empty = document.querySelector<HTMLElement>("[data-empty]")!;
 
-	const params = new URLSearchParams(location.search);
-	let category = params.get("category") ?? "";
-	let method = params.get("method") ?? "";
-	input.value = params.get("q") ?? "";
+	const filters = readFilters(new URLSearchParams(location.search));
+	input.value = filters.q;
 
-	function apply() {
-		const q = input.value.trim();
+	function rankDeals(q: string) {
 		const order = q
-			? fuse.search(q).map((r) => r.item.id)
+			? fuse.search(q).map((result) => result.item.id)
 			: items.map((li) => li.dataset.dealId!);
-		const rank = new Map(order.map((id, i) => [id, i]));
+		return new Map(order.map((id, i) => [id, i]));
+	}
 
-		let shown = 0;
-		for (const li of items) {
-			const ok =
-				rank.has(li.dataset.dealId!) &&
-				(!category || li.dataset.category === category) &&
-				(!method || li.dataset.method === method);
-			li.hidden = !ok;
-			if (ok) shown++;
-		}
-		list.append(
-			...items
-				.filter((li) => !li.hidden)
-				.sort(
-					(a, b) =>
-						rank.get(a.dataset.dealId!)! -
-						rank.get(b.dataset.dealId!)!,
-				),
+	function renderList(rank: Map<string, number>) {
+		const position = (li: HTMLLIElement) => rank.get(li.dataset.dealId!)!;
+		const shown = items.filter(
+			(li) => rank.has(li.dataset.dealId!) && matchesFilters(li.dataset, filters),
 		);
+		items.forEach((li) => (li.hidden = !shown.includes(li)));
+		list.append(...shown.sort((a, b) => position(a) - position(b)));
+		return shown.length;
+	}
 
+	function renderCount(shown: number) {
 		count.textContent = String(shown);
 		empty.hidden = shown > 0;
+	}
+
+	function syncChips() {
 		categoryChips.forEach((chip) =>
 			chip.setAttribute(
 				"aria-pressed",
-				String(chip.dataset.category === category),
+				String(chip.dataset.category === filters.category),
 			),
 		);
 		methodChips.forEach((chip) =>
-			chip.setAttribute("aria-pressed", String(chip.dataset.method === method)),
+			chip.setAttribute(
+				"aria-pressed",
+				String(chip.dataset.method === filters.method),
+			),
 		);
-
-		const url = new URL(location.href);
-		q ? url.searchParams.set("q", q) : url.searchParams.delete("q");
-		category
-			? url.searchParams.set("category", category)
-			: url.searchParams.delete("category");
-		method
-			? url.searchParams.set("method", method)
-			: url.searchParams.delete("method");
-		history.replaceState(null, "", url);
 	}
 
-	input.addEventListener("input", apply);
-	form.addEventListener("submit", (event) => {
-		event.preventDefault();
-		apply();
-	});
+	function apply() {
+		filters.q = input.value.trim();
+		renderCount(renderList(rankDeals(filters.q)));
+		syncChips();
+		history.replaceState(null, "", writeFilters(new URL(location.href), filters));
+	}
+
 	let chipTransition: ViewTransition | undefined;
 	function applyAnimated() {
 		if (
@@ -237,15 +231,21 @@ const chipClass =
 		});
 	}
 
+	input.addEventListener("input", apply);
+	form.addEventListener("submit", (event) => {
+		event.preventDefault();
+		apply();
+	});
 	categoryChips.forEach((chip) =>
 		chip.addEventListener("click", () => {
-			category = chip.dataset.category ?? "";
+			filters.category = chip.dataset.category ?? "";
 			applyAnimated();
 		}),
 	);
 	methodChips.forEach((chip) =>
 		chip.addEventListener("click", () => {
-			method = method === chip.dataset.method ? "" : chip.dataset.method!;
+			const method = chip.dataset.method!;
+			filters.method = filters.method === method ? "" : method;
 			applyAnimated();
 		}),
 	);

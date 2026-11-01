@@ -9,7 +9,6 @@ const LIGHT_GRADIENT = 0.3;
 
 const isDark = () => document.documentElement.classList.contains('dark');
 
-// GradientASCII that follows the site theme (the `dark` class on <html>).
 const HeroASCII = props => {
   const [dark, setDark] = useState(() => typeof document === 'undefined' || isDark());
 

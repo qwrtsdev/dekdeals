@@ -160,14 +160,14 @@ body::-webkit-scrollbar {
 	mix-blend-mode: normal;
 }
 
-/* Markdown body of a deal page (src/pages/deals/[slug].astro) */
+/* Markdown body of a deal pages */
 .deal-prose {
 	max-width: 70ch;
 	color: var(--muted);
 	line-height: 1.8;
 }
 
-.deal-prose > :first-child {
+.deal-prose> :first-child {
 	margin-top: 0;
 }
 
@@ -232,12 +232,11 @@ body::-webkit-scrollbar {
 	position: relative;
 }
 
-/* orange dot bullets */
-.deal-prose ul > li {
+.deal-prose ul>li {
 	padding-left: 1.5rem;
 }
 
-.deal-prose ul > li::before {
+.deal-prose ul>li::before {
 	content: "";
 	position: absolute;
 	left: 0.4rem;
@@ -248,17 +247,16 @@ body::-webkit-scrollbar {
 	background: var(--color-orange-400);
 }
 
-/* numbered steps as round badges */
 .deal-prose ol {
 	counter-reset: step;
 }
 
-.deal-prose ol > li {
+.deal-prose ol>li {
 	counter-increment: step;
 	padding-left: 2.25rem;
 }
 
-.deal-prose ol > li::before {
+.deal-prose ol>li::before {
 	content: counter(step);
 	position: absolute;
 	left: 0;

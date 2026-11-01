@@ -1,0 +1,62 @@
+---
+import { Moon, Sun } from "@lucide/astro";
+---
+
+<button
+	type="button"
+	data-theme-toggle
+	class="rounded-xl p-2.5 text-muted transition hover:bg-subtle hover:text-ink active:scale-90"
+	aria-label="สลับโหมดสว่าง/มืด"
+>
+	<Moon size={20} stroke-width={2} class="dark:hidden" />
+	<Sun size={20} stroke-width={2} class="hidden dark:block" />
+</button>
+
+<script>
+	const button = document.querySelector<HTMLButtonElement>("[data-theme-toggle]")!;
+	const root = document.documentElement;
+	const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+	let current: ViewTransition | undefined;
+
+	function flipTheme() {
+		const dark = root.classList.toggle("dark");
+		// read back on load by the inline script in Layout.astro
+		try {
+			localStorage.setItem("theme", dark ? "dark" : "light");
+		} catch {}
+	}
+
+	function revealFromButton() {
+		const { left, top, width, height } = button.getBoundingClientRect();
+		const x = left + width / 2;
+		const y = top + height / 2;
+		const r = Math.hypot(
+			Math.max(x, innerWidth - x),
+			Math.max(y, innerHeight - y),
+		);
+		root.animate(
+			{
+				clipPath: [
+					`circle(0 at ${x}px ${y}px)`,
+					`circle(${r}px at ${x}px ${y}px)`,
+				],
+			},
+			{
+				duration: 500,
+				easing: "cubic-bezier(0.65, 0, 0.35, 1)",
+				pseudoElement: "::view-transition-new(root)",
+			},
+		);
+	}
+
+	button.addEventListener("click", () => {
+		if (!document.startViewTransition || reduceMotion.matches) return flipTheme();
+
+		root.classList.add("theme-switching");
+		const transition = (current = document.startViewTransition(flipTheme));
+		transition.ready.then(revealFromButton).catch(() => {});
+		transition.finished.finally(() => {
+			if (current === transition) root.classList.remove("theme-switching");
+		});
+	});
+</script>

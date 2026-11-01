@@ -2,6 +2,7 @@
 import HeroASCII from "@/components/HeroASCII.jsx";
 import Layout from "@/layouts/Layout.astro";
 import DealCard from "@/components/DealCard.astro";
+import FaqSection from "@/components/FaqSection.astro";
 import { getCollection } from "astro:content";
 import { categories } from "@/lib/labels";
 import { issueUrl, repoUrl, supportUrl } from "@/lib/links";
@@ -10,7 +11,6 @@ import {
 	Coffee,
 	Heart,
 	MessageSquarePlus,
-	Plus,
 	Search,
 	Star,
 } from "@lucide/astro";
@@ -19,51 +19,6 @@ const deals = await getCollection("offers");
 const active = deals.filter(({ data }) => !data.archived);
 const featured = active.filter(({ data }) => data.featured);
 const usedCategories = [...new Set(active.map(({ data }) => data.category))];
-
-const faqs = [
-	{
-		q: "เว็บไซต์นี้เกี่ยวกับอะไร?",
-		a: "เว็บไซต์ DekDeals เป็นเว็บไซต์ที่เราจะรวบรวมดีลเด็ดจากแบรนด์ต่างๆ ที่เหล่านักเรียนนักศึกษา สามารถใช้สิทธิ์ของตัวเองในการลงทะเบียนเพื่อรับส่วนลด หรือสิทธิ์พิเศษต่างๆ โดยที่ไม่ต้องคอยไปนั่งหาด้วยตัวเองเพื่อช่วยเหลือเพื่อนๆและน้องๆให้สามารถประหยัดค่าใช้จ่ายได้!",
-	},
-	{
-		q: "เว็บนี้เกี่ยวข้องอะไรกับแบรนด์เหล่านี้ไหม?",
-		a: "ทางเราไม่มีส่วนเกี่ยวข้องกับแบรนด์ใดๆทั้งสิ้น เรามีจุดประสงค์เพื่อแค่เป็นแค่แคตตาล็อกที่รวบรวมดีลที่น่าสนใจ ส่วนการสมัครและชำระเงินทั้งหมดจะเกิดขึ้นบนเว็บของแต่ละแบรนด์เอง",
-	},
-	{
-		q: "SheerID คืออะไร?",
-		a: "เป็นบริการยืนยันสถานะนักศึกษาที่ถูกใช้ในหลายๆแบรนด์ใช้ เช่น Spotify, YouTube Premium, หรือ Google AI จำเป็นจะต้องกรอกชื่อสถาบันแล้วยืนยันผ่านการล็อกอินหรืออัปโหลดเอกสาร หากไม่มีชื่อสถาบันของคุณในระบบของ SheerID จะสมัครไม่ได้",
-	},
-	{
-		q: "ใช้อีเมล .ac.th สมัครได้ไหม?",
-		a: "หลายดีลรองรับอีเมลของสถาบัน แต่บางแบรนด์จะต้องยืนยันผ่าน SheerID หรือบัตรนักศึกษาแทน คุณสามารถดูวิธียืนยันได้จากข้อมูลข้างใน หรือค้นหากรองตามในหน้ารวมดีลทั้งหมดได้เลย",
-	},
-	{
-		q: "ถ้าเรียนจบแล้วสิทธิ์จะเป็นยังไงต่อ?",
-		a: "ส่วนใหญ่แล้วจะต้องยืนยันสถานะใหม่ทุกปี หากยืนยันไม่ผ่านแพลนจะเปลี่ยนเป็นราคาปกติหรือหมดสิทธิ์ทันที กรุณาตรวจสอบเงื่อนไขของแต่ละดีลที่เขียนไว้ในหน้าของตัวเอง",
-	},
-	{
-		q: "ข้อมูลในเว็บอัปเดตบ่อยแค่ไหน?",
-		a: "ในทุกดีลๆจะมีวันที่ที่ระบบตรวจสอบล่าสุดกำกับไว้ ระบบจะทำการเช็กการเข้าถึงลิงก์อัตโนมัติในทุกๆวันจันทร์ ถึงอย่างนั้นก็ควรเช็กเงื่อนไขในหน้าทางการก่อนสมัครเสมอ",
-	},
-	{
-		q: "รายการโปรดเก็บ หรือระบบต่างๆไว้ที่ไหน?",
-		a: "ระบบของเราไม่มีหลังบ้าน ซึ่งข้อมูลทุกอย่างจะถูกเก็บไว้ในเบราว์เซอร์นี้เท่านั้น รายการต่างๆจะหายไปหากคุณล้างข้อมูลเบราว์เซอร์หรือเปลี่ยนเครื่อง",
-	},
-	{
-		q: "เจอข้อมูลที่ผิดๆ หรือดีลนั้นไม่มีแล้ว ต้องทำยังไงดี?",
-		a: 'สามารถกดปุ่ม "แจ้งข้อมูลผิด" ในหน้าดีลนั้นๆ หรือเปิด Issue บน GitHub ของเราได้เลย',
-	},
-];
-
-const faqSchema = {
-	"@context": "https://schema.org",
-	"@type": "FAQPage",
-	mainEntity: faqs.map(({ q, a }) => ({
-		"@type": "Question",
-		name: q,
-		acceptedAnswer: { "@type": "Answer", text: a },
-	})),
-};
 
 const stars: number | undefined = await fetch(
 	"https://api.github.com/repos/qwrtsdev/dekdeals",
@@ -88,8 +43,6 @@ const stars: number | undefined = await fetch(
 					shape="horizon"
 					gradientOpacity={1}
 					mouseInteraction={false}
-					dpr={undefined}
-					style={undefined}
 				/>
 				<div
 					class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(250_250_250/0.75),transparent_65%)] dark:bg-[radial-gradient(ellipse_at_center,rgb(10_10_10/0.75),transparent_65%)]"
@@ -273,41 +226,7 @@ const stars: number | undefined = await fetch(
 			</ul>
 		</section>
 
-		<section
-			id="faq"
-			class="relative z-20 mx-auto grid max-w-6xl scroll-mt-20 gap-6 px-6 pt-20 lg:grid-cols-[1fr_2fr] lg:gap-12"
-			aria-labelledby="faq-title"
-		>
-			<div>
-				<h2 id="faq-title" class="text-2xl font-bold sm:text-3xl">
-					คำถามที่พบบ่อย
-				</h2>
-				<p class="mt-2 leading-7 text-muted">
-					รวมเรื่องที่มักสงสัยและควรอ่านก่อนจะสมัคร
-				</p>
-			</div>
-			<div class="divide-y divide-line border-y border-line">
-				{
-					faqs.map(({ q, a }) => (
-						<details name="faq" class="faq group">
-							<summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-semibold transition-colors hover:text-orange-400 [&::-webkit-details-marker]:hidden">
-								<span class="text-pretty">{q}</span>
-								<Plus
-									size={18}
-									stroke-width={2}
-									class="shrink-0 text-faint transition-transform duration-300 group-open:rotate-45 group-open:text-orange-400"
-								/>
-							</summary>
-							<p class="pb-5 leading-7 text-muted">{a}</p>
-						</details>
-					))
-				}
-			</div>
-			<script
-				type="application/ld+json"
-				set:html={JSON.stringify(faqSchema).replace(/</g, "\\u003c")}
-			/>
-		</section>
+		<FaqSection />
 
 		<section
 			class="mx-auto grid max-w-6xl gap-4 px-6 pb-26 pt-10 md:grid-cols-2"
@@ -378,26 +297,6 @@ const stars: number | undefined = await fetch(
 		</section>
 	</main>
 </Layout>
-
-<style>
-	@media (prefers-reduced-motion: no-preference) {
-		.faq {
-			interpolate-size: allow-keywords;
-		}
-
-		.faq::details-content {
-			height: 0;
-			overflow: clip;
-			transition:
-				height 300ms cubic-bezier(0.22, 1, 0.36, 1),
-				content-visibility 300ms allow-discrete;
-		}
-
-		.faq[open]::details-content {
-			height: auto;
-		}
-	}
-</style>
 
 <script>
 	import { getSaved, onSavedChange } from "@/lib/saved";

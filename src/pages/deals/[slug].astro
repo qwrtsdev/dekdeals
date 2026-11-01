@@ -4,7 +4,8 @@ import DealCard from "@/components/DealCard.astro";
 import DealIcon from "@/components/DealIcon.astro";
 import { getCollection, getEntries, render } from "astro:content";
 import { categories, conditionals } from "@/lib/labels";
-import { issueUrl } from "@/lib/links";
+import { reportUrl } from "@/lib/links";
+import { thaiDate } from "@/lib/format";
 import {
 	ArrowLeft,
 	BadgeCheck,
@@ -13,7 +14,6 @@ import {
 	ExternalLink,
 	Flag,
 	Heart,
-	MapPin,
 	Tag,
 	Link,
 } from "@lucide/astro";
@@ -34,13 +34,12 @@ const includedIn = await getEntries(data.includedIn);
 const includes = await getCollection("offers", (other) =>
 	other.data.includedIn.some((ref) => ref.id === offer.id),
 );
+const related = [
+	{ title: "รวมอยู่ใน", deals: includedIn },
+	{ title: "ดีลที่รวมอยู่ในแพ็กนี้", deals: includes },
+].filter(({ deals }) => deals.length > 0);
 
-const verified = data.lastVerified.toLocaleDateString("th-TH", {
-	day: "numeric",
-	month: "long",
-	year: "numeric",
-});
-const reportUrl = `${issueUrl}?title=${encodeURIComponent(`แจ้งปัญหา : ${offer.id}`)}`;
+const verified = thaiDate(data.lastVerified);
 ---
 
 <Layout title={`${data.provider} ${data.name}`} description={data.summary.th}>
@@ -123,7 +122,7 @@ const reportUrl = `${issueUrl}?title=${encodeURIComponent(`แจ้งปัญ
 						ตรวจสอบล่าสุด {verified}
 					</p>
 					<a
-						href={reportUrl}
+						href={reportUrl(offer.id)}
 						target="_blank"
 						rel="noopener"
 						class="inline-flex items-center gap-1.5 font-medium text-red-500 transition hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
@@ -216,27 +215,21 @@ const reportUrl = `${issueUrl}?title=${encodeURIComponent(`แจ้งปัญ
 					<Content />
 				</article>
 				{
-					[
-						["รวมอยู่ใน", includedIn],
-						["ดีลที่รวมอยู่ในแพ็กนี้", includes],
-					].map(
-						([title, deals]) =>
-							deals.length > 0 && (
-								<section class="mt-12">
-									<h2 class="flex items-center gap-2 text-xl font-bold">
-										<Link size={18} />
-										{title}
-									</h2>
-									<ul class="mt-4 grid gap-4 sm:grid-cols-2">
-										{deals.map((deal) => (
-											<li class="reveal">
-												<DealCard deal={deal} />
-											</li>
-										))}
-									</ul>
-								</section>
-							),
-					)
+					related.map(({ title, deals }) => (
+						<section class="mt-12">
+							<h2 class="flex items-center gap-2 text-xl font-bold">
+								<Link size={18} />
+								{title}
+							</h2>
+							<ul class="mt-4 grid gap-4 sm:grid-cols-2">
+								{deals.map((deal) => (
+									<li class="reveal">
+										<DealCard deal={deal} />
+									</li>
+								))}
+							</ul>
+						</section>
+					))
 				}
 			</div>
 		</div>

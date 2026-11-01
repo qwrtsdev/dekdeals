@@ -1,0 +1,117 @@
+---
+import { Search, X } from "@lucide/astro";
+---
+
+<div
+	id="mobile-search-drawer"
+	data-mobile-search-drawer
+	role="dialog"
+	aria-modal="true"
+	aria-hidden="true"
+	class="pointer-events-none invisible fixed inset-x-0 top-0 z-50 -translate-y-full rounded-b-2xl border-b border-line bg-surface p-4 text-left opacity-0 shadow-2xl transition-[translate,opacity] duration-300 ease-out"
+	aria-labelledby="mobile-search-title"
+>
+	<div class="flex items-center gap-3">
+		<h2 id="mobile-search-title" class="sr-only">ค้นหาดีล</h2>
+		<form action="/deals" method="get" role="search" class="min-w-0 flex-1">
+			<label for="mobile-navbar-search" class="sr-only">ค้นหาดีล</label>
+			<div class="relative">
+				<Search
+					size={18}
+					stroke-width={2}
+					class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint"
+				/>
+				<input
+					id="mobile-navbar-search"
+					name="q"
+					type="search"
+					enterkeyhint="search"
+					placeholder="ค้นหาดีล..."
+					data-navbar-search
+					class="w-full rounded-xl border border-line bg-subtle py-2.5 pl-10 pr-10 text-base text-ink outline-none transition placeholder:text-faint focus:border-orange-400 focus:bg-surface focus:ring-4 focus:ring-orange-400/15 [&::-webkit-search-cancel-button]:hidden"
+				/>
+				<button
+					type="button"
+					data-navbar-search-clear
+					class="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-md p-1 text-faint"
+					aria-label="ล้างคำค้นหา"
+				>
+					<X size={16} stroke-width={2} />
+				</button>
+			</div>
+		</form>
+		<button
+			type="button"
+			data-mobile-search-close
+			class="rounded-xl p-2 text-muted transition hover:bg-subtle hover:text-ink"
+			aria-label="ปิดค้นหา"
+		>
+			<X size={20} stroke-width={2} />
+		</button>
+	</div>
+</div>
+<div
+	data-mobile-search-backdrop
+	class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-sm transition-opacity duration-300"
+	aria-hidden="true"
+>
+</div>
+
+<script>
+	const trigger = document.querySelector<HTMLButtonElement>(
+		"[data-mobile-search-trigger]",
+	)!;
+	const drawer = document.querySelector<HTMLDivElement>(
+		"[data-mobile-search-drawer]",
+	)!;
+	const backdrop = document.querySelector<HTMLDivElement>(
+		"[data-mobile-search-backdrop]",
+	)!;
+	const closeButton = document.querySelector<HTMLButtonElement>(
+		"[data-mobile-search-close]",
+	)!;
+	let hideTimeout: number | undefined;
+
+	const isOpen = () => trigger.getAttribute("aria-expanded") === "true";
+
+	function setOpen(open: boolean) {
+		for (const el of [drawer, backdrop]) {
+			el.classList.toggle("opacity-100", open);
+			el.classList.toggle("pointer-events-auto", open);
+			el.classList.toggle("opacity-0", !open);
+			el.classList.toggle("pointer-events-none", !open);
+		}
+		drawer.classList.toggle("translate-y-0", open);
+		drawer.classList.toggle("-translate-y-full", !open);
+		drawer.setAttribute("aria-hidden", String(!open));
+		trigger.setAttribute("aria-expanded", String(open));
+		document.body.classList.toggle("overflow-hidden", open);
+	}
+
+	function open() {
+		window.clearTimeout(hideTimeout);
+		drawer.style.visibility = "visible";
+		setOpen(true);
+		requestAnimationFrame(() => {
+			drawer
+				.querySelector<HTMLInputElement>("[data-navbar-search]")
+				?.focus();
+		});
+	}
+
+	function close() {
+		setOpen(false);
+		// after the 300ms slide-out
+		hideTimeout = window.setTimeout(() => {
+			drawer.style.visibility = "hidden";
+		}, 300);
+		trigger.focus();
+	}
+
+	trigger.addEventListener("click", open);
+	closeButton.addEventListener("click", close);
+	backdrop.addEventListener("click", close);
+	document.addEventListener("keydown", (event) => {
+		if (event.key === "Escape" && isOpen()) close();
+	});
+</script>
