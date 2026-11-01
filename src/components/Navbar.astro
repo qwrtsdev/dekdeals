@@ -14,7 +14,7 @@ const dealInfo = Object.fromEntries(
 <nav class="theme-light">
 	<div
 		data-navbar
-		class="mx-auto max-w-full border-b border-line bg-white/95 backdrop-blur-3xl dark:bg-white/97 transition-[max-width,translate,border-radius,box-shadow,background-color] duration-500 ease-[linear(0.0,0.087,0.288,0.523,0.743,0.917,1.036,1.102,1.126,1.12,1.097,1.067,1.038,1.015,0.998,0.988,0.984,0.984,0.987,0.991,0.994,0.997,1.0,1.001,1.002,1)] motion-reduce:transition-none data-scrolled:max-w-[min(69rem,calc(100%_-_1.5rem))] data-scrolled:translate-y-3 data-scrolled:rounded-2xl data-scrolled:border data-scrolled:bg-white/95 dark:data-scrolled:bg-white/97 data-scrolled:shadow-lg data-scrolled:shadow-black/10 md:data-scrolled:translate-y-5"
+		class="vt-navbar mx-auto max-w-full border-b border-line bg-white/95 backdrop-blur-3xl dark:bg-white/97 transition-[max-width,translate,border-radius,box-shadow,background-color] duration-500 ease-[linear(0.0,0.087,0.288,0.523,0.743,0.917,1.036,1.102,1.126,1.12,1.097,1.067,1.038,1.015,0.998,0.988,0.984,0.984,0.987,0.991,0.994,0.997,1.0,1.001,1.002,1)] motion-reduce:transition-none data-scrolled:max-w-[min(69rem,calc(100%_-_1.5rem))] data-scrolled:translate-y-3 data-scrolled:rounded-2xl data-scrolled:border data-scrolled:bg-white/95 dark:data-scrolled:bg-white/97 data-scrolled:shadow-lg data-scrolled:shadow-black/10 md:data-scrolled:translate-y-5"
 	>
 		<div
 			class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 md:gap-6"
@@ -109,7 +109,7 @@ const dealInfo = Object.fromEntries(
 	role="dialog"
 	aria-modal="true"
 	aria-hidden="true"
-	class="pointer-events-none fixed inset-x-0 top-0 z-50 -translate-y-full rounded-b-2xl border-b border-line bg-surface p-4 text-left opacity-0 shadow-2xl transition-[translate,opacity] duration-300 ease-out"
+	class="pointer-events-none invisible fixed inset-x-0 top-0 z-50 -translate-y-full rounded-b-2xl border-b border-line bg-surface p-4 text-left opacity-0 shadow-2xl transition-[translate,opacity] duration-300 ease-out"
 	aria-labelledby="mobile-search-title"
 >
 	<div class="flex items-center gap-3">
@@ -298,7 +298,9 @@ const dealInfo = Object.fromEntries(
 				`[data-saved-count="${kind}"]`,
 			)!.textContent = String(ids.length);
 			if (kind === "favorites") {
-				const grew = ids.length > Number(favBadge.textContent);
+				const grew =
+					favBadge.textContent !== "" &&
+					ids.length > Number(favBadge.textContent);
 				favBadge.hidden = ids.length === 0;
 				favBadge.textContent = String(ids.length);
 				if (grew && !reduceMotion.matches)
@@ -321,6 +323,7 @@ const dealInfo = Object.fromEntries(
 	const themeToggle = document.querySelector<HTMLButtonElement>(
 		"[data-theme-toggle]",
 	)!;
+	let themeTransition: ViewTransition | undefined;
 	themeToggle.addEventListener("click", () => {
 		const root = document.documentElement;
 		const flip = () => {
@@ -339,25 +342,28 @@ const dealInfo = Object.fromEntries(
 			Math.max(y, innerHeight - y),
 		);
 		root.classList.add("theme-switching");
-		const transition = document.startViewTransition(flip);
-		transition.ready.then(() =>
-			root.animate(
-				{
-					clipPath: [
-						`circle(0 at ${x}px ${y}px)`,
-						`circle(${r}px at ${x}px ${y}px)`,
-					],
-				},
-				{
-					duration: 500,
-					easing: "cubic-bezier(0.65, 0, 0.35, 1)",
-					pseudoElement: "::view-transition-new(root)",
-				},
-			),
-		);
-		transition.finished.finally(() =>
-			root.classList.remove("theme-switching"),
-		);
+		const transition = (themeTransition = document.startViewTransition(flip));
+		transition.ready
+			.then(() =>
+				root.animate(
+					{
+						clipPath: [
+							`circle(0 at ${x}px ${y}px)`,
+							`circle(${r}px at ${x}px ${y}px)`,
+						],
+					},
+					{
+						duration: 500,
+						easing: "cubic-bezier(0.65, 0, 0.35, 1)",
+						pseudoElement: "::view-transition-new(root)",
+					},
+				),
+			)
+			.catch(() => {});
+		transition.finished.finally(() => {
+			if (themeTransition === transition)
+				root.classList.remove("theme-switching");
+		});
 	});
 
 	const trigger = document.querySelector<HTMLButtonElement>(

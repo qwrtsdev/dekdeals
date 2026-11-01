@@ -219,6 +219,7 @@ const chipClass =
 		event.preventDefault();
 		apply();
 	});
+	let chipTransition: ViewTransition | undefined;
 	function applyAnimated() {
 		if (
 			!document.startViewTransition ||
@@ -228,9 +229,11 @@ const chipClass =
 		const name = (li: HTMLLIElement, on: boolean) =>
 			(li.style.viewTransitionName = on ? `deal-${li.dataset.dealId}` : "");
 		items.forEach((li) => name(li, true));
-		document
-			.startViewTransition(apply)
-			.finished.finally(() => items.forEach((li) => name(li, false)));
+		const transition = (chipTransition = document.startViewTransition(apply));
+		transition.finished.finally(() => {
+			if (chipTransition === transition)
+				items.forEach((li) => name(li, false));
+		});
 	}
 
 	categoryChips.forEach((chip) =>

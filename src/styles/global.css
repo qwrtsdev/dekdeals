@@ -141,8 +141,13 @@ body::-webkit-scrollbar {
 	view-transition-name: navbar;
 }
 
-.theme-switching .vt-navbar {
-	view-transition-name: none;
+.theme-switching::view-transition-group(navbar),
+.theme-switching::view-transition-new(navbar) {
+	animation: none;
+}
+
+.theme-switching::view-transition-old(navbar) {
+	display: none;
 }
 
 .theme-switching::view-transition-old(root),
