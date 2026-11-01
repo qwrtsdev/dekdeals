@@ -4,7 +4,15 @@ import Layout from "@/layouts/Layout.astro";
 import DealCard from "@/components/DealCard.astro";
 import { getCollection } from "astro:content";
 import { categories } from "@/lib/labels";
-import { ArrowRight, MessageSquarePlus, Search, Star } from "@lucide/astro";
+import {
+	ArrowRight,
+	Coffee,
+	Heart,
+	MessageSquarePlus,
+	Plus,
+	Search,
+	Star,
+} from "@lucide/astro";
 
 const deals = await getCollection("offers");
 const active = deals.filter(({ data }) => !data.archived);
@@ -12,6 +20,52 @@ const featured = active.filter(({ data }) => data.featured);
 const usedCategories = [...new Set(active.map(({ data }) => data.category))];
 const suggestUrl = "https://github.com/qwrtsdev/dekdeals/issues/new";
 const repoUrl = "https://github.com/qwrtsdev/dekdeals";
+const supportUrl = "https://ko-fi.com/qwrtsdev";
+
+const faqs = [
+	{
+		q: "เว็บไซต์นี้เกี่ยวกับอะไร?",
+		a: "เว็บไซต์ DekDeals เป็นเว็บไซต์ที่เราจะรวบรวมดีลเด็ดจากแบรนด์ต่างๆ ที่เหล่านักเรียนนักศึกษา สามารถใช้สิทธิ์ของตัวเองในการลงทะเบียนเพื่อรัยส่วนลด หรือสิทธิ์พิเศษต่างๆ โดยที่ไม่ต้องคอยไปนั่งหาด้วยตัวเองเพื่อช่วยเหลือเพื่อนๆและน้องๆให้สามารถประหยัดค่าใช้จ่ายได้!",
+	},
+	{
+		q: "เว็บนี้เกี่ยวข้องกับแบรนด์เหล่านี้ไหม?",
+		a: "ทางเราไม่มีส่วนเกี่ยวข้องกับแบรนด์ใดๆทั้งสิ้น เรามีจุดประสงค์เพื่อเป็นแค่แคตตาล็อกที่รวบรวมดีลที่น่าสนใจ ส่วนการสมัครและชำระเงินทั้งหมดจะเกิดขึ้นบนเว็บของแต่ละแบรนด์เอง",
+	},
+	{
+		q: "SheerID คืออะไร?",
+		a: "เป็นบริการยืนยันสถานะนักศึกษาที่ถูกใช้ในหลายๆแบรนด์ใช้ เช่น Spotify, YouTube Premium, Google AI และ Figma จำเป็นจะต้องกรอกชื่อสถาบันแล้วยืนยันผ่านการล็อกอินหรืออัปโหลดเอกสาร หากไม่มีชื่อสถาบันของคุณในระบบของ SheerID จะสมัครไม่ได้",
+	},
+	{
+		q: "ใช้อีเมล .ac.th สมัครได้ไหม?",
+		a: "หลายดีลรองรับอีเมลของสถาบัน แต่บางแบรนด์จะต้องยืนยันผ่าน SheerID หรือบัตรนักศึกษาแทน สามารถดูวิธียืนยันได้จากข้อมูลข้างใน หรือค้นหากรองตามในหน้ารวมดีลทั้งหมด",
+	},
+	{
+		q: "เรียนจบแล้วสิทธิ์จะเป็นยังไง?",
+		a: "ส่วนใหญ่แล้วจะต้องยืนยันสถานะใหม่ทุกปี หากยืนยันไม่ผ่านแพลนจะเปลี่ยนเป็นราคาปกติหรือหมดสิทธิ์ทันที กรุณาตรวจสอบเงื่อนไขของแต่ละดีลที่เขียนไว้ในหน้าของตัวเอง",
+	},
+	{
+		q: "ข้อมูลอัปเดตบ่อยแค่ไหน?",
+		a: "ในทุกดีลๆจะมีวันที่ที่ระบบตรวจสอบล่าสุดกำกับไว้ ระบบจะทำการเช็กการเข้าถึงลิงก์อัตโนมัติในทุกๆวันจันทร์ ถึงอย่างนั้นก็ควรเช็กเงื่อนไขในหน้าทางการก่อนสมัครเสมอ",
+	},
+	{
+		q: "รายการโปรดเก็บไว้ที่ไหน?",
+		a: "ระบบของเราไม่มีหลังบ้านแบบออนไลน์ ซึ่งข้อมูลทุกอย่างจะถูกเก็บไว้ในเบราว์เซอร์นี้เท่านั้น  รายการจะหายไปหากคุณล้างข้อมูลเบราว์เซอร์หรือเปลี่ยนเครื่อง",
+	},
+	{
+		q: "เจอข้อมูลที่ผิดๆ หรือดีลนั้นไม่มีแล้ว ต้องทำยังไงดี?",
+		a: 'สามารถกดปุ่ม "แจ้งข้อมูลผิด" ในหน้าดีลนั้นๆ หรือเปิด Issue บน GitHub ของเราได้เลย',
+	},
+];
+
+const faqSchema = {
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	mainEntity: faqs.map(({ q, a }) => ({
+		"@type": "Question",
+		name: q,
+		acceptedAnswer: { "@type": "Answer", text: a },
+	})),
+};
 
 const stars: number | undefined = await fetch(
 	"https://api.github.com/repos/qwrtsdev/dekdeals",
@@ -167,16 +221,19 @@ const stars: number | undefined = await fetch(
 			</div>
 		</section>
 
-		<section
-			class="relative z-20 mx-auto max-w-6xl px-6 pb-6 pt-16"
-		>
-			<div class="flex items-end justify-between gap-4">
-				<h2 class="text-2xl font-bold sm:text-3xl">
-					ดีลดีที่อยากแนะนำ
-				</h2>
+		<section class="relative z-20 mx-auto max-w-6xl px-6 pb-6 pt-16">
+			<div class="flex items-start justify-between gap-4">
+				<div>
+					<h2 class="text-2xl font-bold sm:text-3xl">
+						ดีลดีที่อยากแนะนำ
+					</h2>
+					<p class="mt-2 leading-7 text-muted">
+						ถ้านึกไม่ออก ลองดูดีลเหล่านี้ก่อนได้เลย
+					</p>
+				</div>
 				<a
 					href="/deals"
-					class="group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted transition-colors hover:text-orange-400"
+					class="group mt-1.5 inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted transition-colors hover:text-orange-400 sm:mt-2"
 				>
 					อ่านทั้งหมด
 					<ArrowRight
@@ -201,7 +258,7 @@ const stars: number | undefined = await fetch(
 		<section
 			data-fav-section
 			hidden
-			class="relative z-20 mx-auto max-w-6xl px-6 pt-20"
+			class="relative z-20 mx-auto max-w-6xl px-6 pt-10"
 		>
 			<h2 class="text-2xl font-bold sm:text-3xl">ดีลที่คุณชอบ</h2>
 			<ul
@@ -218,9 +275,46 @@ const stars: number | undefined = await fetch(
 			</ul>
 		</section>
 
-		<section class="reveal mx-auto max-w-6xl px-6 py-20">
+		<section
+			class="relative z-20 mx-auto grid max-w-6xl gap-6 px-6 pt-20 lg:grid-cols-[1fr_2fr] lg:gap-12"
+			aria-labelledby="faq-title"
+		>
+			<div>
+				<h2 id="faq-title" class="text-2xl font-bold sm:text-3xl">
+					คำถามที่พบบ่อย
+				</h2>
+				<p class="mt-2 leading-7 text-muted">
+					รวมเรื่องที่มักสงสัยและควรอ่านก่อนจะสมัคร
+				</p>
+			</div>
+			<div class="divide-y divide-line border-y border-line">
+				{
+					faqs.map(({ q, a }) => (
+						<details name="faq" class="faq group">
+							<summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-semibold transition-colors hover:text-orange-400 [&::-webkit-details-marker]:hidden">
+								<span class="text-pretty">{q}</span>
+								<Plus
+									size={18}
+									stroke-width={2}
+									class="shrink-0 text-faint transition-transform duration-300 group-open:rotate-45 group-open:text-orange-400"
+								/>
+							</summary>
+							<p class="pb-5 leading-7 text-muted">{a}</p>
+						</details>
+					))
+				}
+			</div>
+			<script
+				type="application/ld+json"
+				set:html={JSON.stringify(faqSchema).replace(/</g, "\\u003c")}
+			/>
+		</section>
+
+		<section
+			class="reveal mx-auto grid max-w-6xl gap-4 px-6 pb-26 pt-10 md:grid-cols-2"
+		>
 			<div
-				class="relative isolate flex flex-col items-start gap-6 overflow-hidden rounded-2xl bg-orange-400 p-6 text-neutral-950 sm:p-10 md:flex-row md:items-center md:justify-between"
+				class="relative isolate flex flex-col items-start gap-6 overflow-hidden rounded-2xl bg-orange-400 p-6 text-neutral-950 ring-1 ring-black/5 sm:p-10"
 			>
 				<span
 					aria-hidden="true"
@@ -240,7 +334,7 @@ const stars: number | undefined = await fetch(
 					href={suggestUrl}
 					target="_blank"
 					rel="noopener"
-					class="group inline-flex shrink-0 items-center gap-2 rounded-xl bg-neutral-950 px-5 py-3 text-sm font-semibold text-neutral-50 transition hover:bg-neutral-800 active:scale-95 focus-visible:outline-neutral-950"
+					class="group mt-auto inline-flex shrink-0 items-center gap-2 rounded-xl bg-neutral-950 px-5 py-3 text-sm font-semibold text-neutral-50 shadow-[0_3px_0_var(--color-neutral-700)] transition hover:bg-neutral-800 focus-visible:outline-neutral-950 active:translate-y-[3px] active:shadow-none"
 				>
 					<MessageSquarePlus
 						size={18}
@@ -250,9 +344,61 @@ const stars: number | undefined = await fetch(
 					ส่ง Issues บน GitHub
 				</a>
 			</div>
+
+			<div
+				class="relative isolate flex flex-col items-start gap-6 overflow-hidden rounded-2xl bg-neutral-950 p-6 text-neutral-50 ring-1 ring-white/10 sm:p-10 dark:bg-neutral-900"
+			>
+				<Heart
+					aria-hidden="true"
+					stroke-width={0}
+					class="pointer-events-none absolute -bottom-16 -right-12 -z-10 size-[22rem] fill-current text-neutral-800 select-none sm:-bottom-14 sm:-right-10 sm:size-[17rem] dark:text-neutral-800"
+				/>
+				<div>
+					<h2 class="text-2xl font-bold sm:text-3xl">
+						ชอบโปรเจคนี้ไหม?
+					</h2>
+					<p class="mt-2 leading-7 text-neutral-50/75">
+						ถ้าเว็บนี้ช่วยให้คุณประหยัดได้<br />
+						เลี้ยงกาแฟคนทำสักแก้ว เป็นกำลังใจให้ทำต่อได้นะ
+					</p>
+				</div>
+				<a
+					href={supportUrl}
+					target="_blank"
+					rel="noopener"
+					class="btn-brand group mt-auto px-5 py-3 text-sm focus-visible:outline-orange-400"
+				>
+					<Coffee
+						size={18}
+						stroke-width={2}
+						class="transition-transform group-hover:-rotate-12"
+					/>
+					สนับสนุนผ่าน Ko-fi
+				</a>
+			</div>
 		</section>
 	</main>
 </Layout>
+
+<style>
+	@media (prefers-reduced-motion: no-preference) {
+		.faq {
+			interpolate-size: allow-keywords;
+		}
+
+		.faq::details-content {
+			height: 0;
+			overflow: clip;
+			transition:
+				height 300ms cubic-bezier(0.22, 1, 0.36, 1),
+				content-visibility 300ms allow-discrete;
+		}
+
+		.faq[open]::details-content {
+			height: auto;
+		}
+	}
+</style>
 
 <script>
 	import { getSaved, onSavedChange } from "@/lib/saved";
