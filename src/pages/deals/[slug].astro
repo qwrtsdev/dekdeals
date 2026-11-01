@@ -4,6 +4,7 @@ import DealCard from "@/components/DealCard.astro";
 import DealIcon from "@/components/DealIcon.astro";
 import { getCollection, getEntries, render } from "astro:content";
 import { categories, conditionals } from "@/lib/labels";
+import { issueUrl } from "@/lib/links";
 import {
 	ArrowLeft,
 	BadgeCheck,
@@ -39,7 +40,7 @@ const verified = data.lastVerified.toLocaleDateString("th-TH", {
 	month: "long",
 	year: "numeric",
 });
-const reportUrl = `https://github.com/qwrtsdev/dekdeals/issues/new?title=${encodeURIComponent(`แจ้งปัญหา : ${offer.id}`)}`;
+const reportUrl = `${issueUrl}?title=${encodeURIComponent(`แจ้งปัญหา : ${offer.id}`)}`;
 ---
 
 <Layout title={`${data.provider} ${data.name}`} description={data.summary.th}>

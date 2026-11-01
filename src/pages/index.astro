@@ -4,6 +4,7 @@ import Layout from "@/layouts/Layout.astro";
 import DealCard from "@/components/DealCard.astro";
 import { getCollection } from "astro:content";
 import { categories } from "@/lib/labels";
+import { issueUrl, repoUrl, supportUrl } from "@/lib/links";
 import {
 	ArrowRight,
 	Coffee,
@@ -18,9 +19,6 @@ const deals = await getCollection("offers");
 const active = deals.filter(({ data }) => !data.archived);
 const featured = active.filter(({ data }) => data.featured);
 const usedCategories = [...new Set(active.map(({ data }) => data.category))];
-const suggestUrl = "https://github.com/qwrtsdev/dekdeals/issues/new";
-const repoUrl = "https://github.com/qwrtsdev/dekdeals";
-const supportUrl = "https://ko-fi.com/qwrtsdev";
 
 const faqs = [
 	{
@@ -276,7 +274,8 @@ const stars: number | undefined = await fetch(
 		</section>
 
 		<section
-			class="relative z-20 mx-auto grid max-w-6xl gap-6 px-6 pt-20 lg:grid-cols-[1fr_2fr] lg:gap-12"
+			id="faq"
+			class="relative z-20 mx-auto grid max-w-6xl scroll-mt-20 gap-6 px-6 pt-20 lg:grid-cols-[1fr_2fr] lg:gap-12"
 			aria-labelledby="faq-title"
 		>
 			<div>
@@ -331,7 +330,7 @@ const stars: number | undefined = await fetch(
 					</p>
 				</div>
 				<a
-					href={suggestUrl}
+					href={issueUrl}
 					target="_blank"
 					rel="noopener"
 					class="group mt-auto inline-flex shrink-0 items-center gap-2 rounded-xl bg-neutral-950 px-5 py-3 text-sm font-semibold text-neutral-50 shadow-[0_3px_0_var(--color-neutral-700)] transition hover:bg-neutral-800 focus-visible:outline-neutral-950 active:translate-y-[3px] active:shadow-none"
