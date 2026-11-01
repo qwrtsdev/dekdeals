@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar.astro";
 import ShapeGrid from "@/components/ShapeGrid.jsx";
 import "@/styles/global.css";
 import { Font } from "astro:assets";
+import Analytics from "@vercel/analytics/astro";
 
 interface Props {
 	title?: string;
@@ -43,6 +44,7 @@ const {
 		</script>
 	</head>
 	<body class="min-h-screen bg-page text-ink antialiased">
+		<Analytics />
 		<div class="sticky top-0 z-50">
 			<Navbar />
 		</div>
