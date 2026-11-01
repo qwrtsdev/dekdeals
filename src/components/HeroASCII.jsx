@@ -4,6 +4,8 @@ import GradientASCII from './GradientASCII.jsx';
 const DARK_COLORS = ['#d88d1e', '#ffd9b2', '#ffdea5', '#f8b238'];
 // pale colors vanish on a white page, so light mode uses stronger oranges
 const LIGHT_COLORS = ['#ea580c', '#fdba74', '#fb923c', '#f97316'];
+// a full-strength orange wash buries the headline, so light mode keeps the glyphs and fades the fill
+const LIGHT_GRADIENT = 0.3;
 
 const isDark = () => document.documentElement.classList.contains('dark');
 
@@ -18,7 +20,14 @@ const HeroASCII = props => {
     return () => observer.disconnect();
   }, []);
 
-  return <GradientASCII {...props} colors={dark ? DARK_COLORS : LIGHT_COLORS} lightMode={!dark} />;
+  return (
+    <GradientASCII
+      {...props}
+      colors={dark ? DARK_COLORS : LIGHT_COLORS}
+      gradientOpacity={dark ? props.gradientOpacity : LIGHT_GRADIENT}
+      lightMode={!dark}
+    />
+  );
 };
 
 export default HeroASCII;
