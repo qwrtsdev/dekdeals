@@ -323,9 +323,7 @@ const dealInfo = Object.fromEntries(
 	const themeToggle = document.querySelector<HTMLButtonElement>(
 		"[data-theme-toggle]",
 	)!;
-	const mouse = matchMedia("(hover: hover) and (pointer: fine)");
 	let themeTransition: ViewTransition | undefined;
-	let fadeTimer: number | undefined;
 	themeToggle.addEventListener("click", () => {
 		const root = document.documentElement;
 		const flip = () => {
@@ -334,17 +332,7 @@ const dealInfo = Object.fromEntries(
 				localStorage.setItem("theme", dark ? "dark" : "light");
 			} catch {}
 		};
-		if (reduceMotion.matches) return flip();
-		if (!document.startViewTransition || !mouse.matches) {
-			root.classList.add("theme-fade");
-			flip();
-			clearTimeout(fadeTimer);
-			fadeTimer = window.setTimeout(
-				() => root.classList.remove("theme-fade"),
-				300,
-			);
-			return;
-		}
+		if (!document.startViewTransition || reduceMotion.matches) return flip();
 
 		const { left, top, width, height } = themeToggle.getBoundingClientRect();
 		const x = left + width / 2;

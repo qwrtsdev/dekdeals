@@ -142,16 +142,16 @@ body::-webkit-scrollbar {
 }
 
 .theme-switching .vt-navbar {
-	view-transition-name: none;
+	backdrop-filter: none;
 }
 
-.theme-fade,
-.theme-fade * {
-	transition:
-		background-color 300ms,
-		border-color 300ms,
-		color 300ms,
-		fill 300ms;
+.theme-switching::view-transition-group(navbar),
+.theme-switching::view-transition-new(navbar) {
+	animation: none;
+}
+
+.theme-switching::view-transition-old(navbar) {
+	display: none;
 }
 
 .theme-switching::view-transition-old(root),
