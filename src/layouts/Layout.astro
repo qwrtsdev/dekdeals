@@ -4,6 +4,11 @@ import ShapeGrid from "@/components/ShapeGrid.jsx";
 import "@/styles/global.css";
 import { Font } from "astro:assets";
 import Analytics from "@vercel/analytics/astro";
+import Logo from "@/assets/fire.png";
+import { ArrowUpRight } from "@lucide/astro";
+import { getCollection } from "astro:content";
+import { categories } from "@/lib/labels";
+import { issueUrl, repoUrl, supportUrl } from "@/lib/links";
 
 interface Props {
 	title?: string;
@@ -14,6 +19,43 @@ const {
 	title,
 	description = "แคตตาล็อครวมส่วนลดและสิทธิพิเศษสำหรับนักเรียนนักศึกษา เพื่อความคุ้มขั้นสุด",
 } = Astro.props;
+
+const deals = await getCollection("offers");
+const usedCategories = [...new Set(deals.map(({ data }) => data.category))];
+const lastUpdated = new Date(
+	Math.max(...deals.map(({ data }) => data.lastVerified.getTime())),
+).toLocaleDateString("th-TH", {
+	day: "numeric",
+	month: "long",
+	year: "numeric",
+});
+
+const footerLinks: [string, [string, string][]][] = [
+	[
+		"เมนูต่างๆ",
+		[
+			["หน้าแรก", "/"],
+			["ดีลทั้งหมด", "/deals"],
+			["คำถามที่พบบ่อย", "/#faq"],
+		],
+	],
+	[
+		"หมวดหมู่ทั้งหมด",
+		usedCategories.map((c) => [categories[c], `/deals?category=${c}`]),
+	],
+	[
+		"เกี่ยวกับโปรเจค",
+		[
+			["GitHub", repoUrl],
+			["แนะนำดีล", issueUrl],
+			[
+				"แจ้งข้อมูลผิด",
+				`${issueUrl}?title=${encodeURIComponent("แจ้งปัญหา : ")}`,
+			],
+			["สนับสนุนโปรเจค", supportUrl],
+		],
+	],
+];
 ---
 
 <html lang="th">
@@ -65,19 +107,96 @@ const {
 				fade={0.6}
 			/>
 			<div
-				class="mx-auto flex max-w-6xl flex-col items-center gap-1 px-6 py-8 text-sm text-muted sm:flex-row sm:justify-between"
+				class="mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-10 pt-12 lg:flex-row lg:justify-between"
 			>
-				<p>
-					เว็บไซต์โดย <a
-						href="https://qwrts.dev/"
-						target="_blank"
-						class="font-semibold text-ink underline decoration-orange-400 decoration-2 underline-offset-4 transition-colors hover:text-orange-400"
-						>qwrtsdev</a
+				<div>
+					<a
+						href="/"
+						class="inline-flex items-center gap-2"
+						aria-label="DekDeals home"
 					>
-				</p>
-				<p class="text-center sm:text-right">
-					กรุณาตรวจสอบข้อมูลก่อนสมัครเสมอเพื่อความถูกต้อง
-				</p>
+						<img
+							src={Logo.src}
+							alt=""
+							class="size-8 object-contain"
+						/>
+						<span class="text-xl font-black text-orange-400"
+							>DEKDEALS</span
+						>
+					</a>
+					<p class="mt-3 max-w-xs text-sm leading-6 text-muted">
+						แคตตาล็อครวมส่วนลดและสิทธิพิเศษสำหรับนักเรียนนักศึกษา
+					</p>
+					<p class="mt-4 max-w-xs text-[13px] leading-5 text-faint">
+						เราไม่มีส่วนเกี่ยวข้องกับแบรนด์ใดๆทั้งสิ้น
+						ชื่อและโลโก้เป็นของเจ้าของแต่ละราย
+						กรุณาตรวจสอบเงื่อนไขบนหน้าทางการก่อนการสมัครเสมอ
+					</p>
+				</div>
+				<div
+					class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:flex lg:gap-16"
+				>
+					{
+						footerLinks.map(([heading, links]) => (
+							<nav aria-label={heading} class="lg:text-right">
+								<h2 class="text-sm font-semibold text-ink">
+									{heading}
+								</h2>
+								<ul class="mt-2 space-y-1 text-sm">
+									{links.map(([label, href]) => {
+										const external =
+											href.startsWith("http");
+										return (
+											<li>
+												<a
+													href={href}
+													{...(external && {
+														target: "_blank",
+														rel: "noopener",
+													})}
+													class="group inline-flex items-center gap-1 py-1 text-muted transition-colors hover:text-orange-400"
+												>
+													{label}
+													{external && (
+														<>
+															<ArrowUpRight
+																size={13}
+																stroke-width={2}
+																aria-hidden="true"
+																class="text-faint transition-[color,translate] group-hover:-translate-y-px group-hover:translate-x-px group-hover:text-orange-400"
+															/>
+															<span class="sr-only">
+																(เปิดในแท็บใหม่)
+															</span>
+														</>
+													)}
+												</a>
+											</li>
+										);
+									})}
+								</ul>
+							</nav>
+						))
+					}
+				</div>
+			</div>
+			<div class="mx-auto max-w-6xl px-6">
+				<div
+					class="flex flex-col gap-1 border-t border-line py-6 text-[13px] text-faint sm:flex-row sm:justify-between"
+				>
+					<p>
+						© {new Date().getFullYear()} DekDeals · เว็บไซต์โดย <a
+							href="https://qwrts.dev/"
+							target="_blank"
+							rel="noopener"
+							class="font-semibold text-ink underline decoration-orange-400 decoration-2 underline-offset-4 transition-colors hover:text-orange-400"
+							>qwrtsdev</a
+						>
+					</p>
+					<p>
+						ข้อมูลอัปเดตล่าสุด {lastUpdated}
+					</p>
+				</div>
 			</div>
 		</footer>
 	</body>
