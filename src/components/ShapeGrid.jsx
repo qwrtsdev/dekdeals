@@ -609,7 +609,6 @@ export default function ShapeGrid({
       const s = settingsRef.current;
       const dt = state.last ? Math.min(0.05, (now - state.last) / 1000) : 1 / 60;
       state.last = now;
-      resize();
       if (!state.started) {
         state.started = true;
         state.startedAt = state.time;
