@@ -1,6 +1,5 @@
-// categories and conditionals (verification methods).
-// content.config.ts builds its schema from these
-// it fails to build if put unknown labels to items.
+// content.config.ts builds its schema from these, 
+// so an unknown label fails the build.
 
 export const categories = {
 	software: "ซอฟต์แวร์",

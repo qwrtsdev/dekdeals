@@ -1,0 +1,214 @@
+---
+// opened by [data-favorites-trigger] in Navbar.astro, which also holds the count badge
+import { X } from "@lucide/astro";
+import { getCollection } from "astro:content";
+import { jsonScript } from "@/lib/format";
+
+const dealInfo = Object.fromEntries(
+	(await getCollection("offers")).map(({ id, data }) => [
+		id,
+		{ name: data.name, provider: data.provider, icon: data.icon },
+	]),
+);
+---
+
+<dialog
+	id="favorites-drawer"
+	data-favorites-drawer
+	class="fixed inset-y-0 right-0 m-0 ml-auto flex h-full max-h-none w-full max-w-sm translate-x-full flex-col border-l border-line bg-surface p-0 text-left text-ink shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] backdrop:bg-black/50 backdrop:backdrop-blur-sm md:max-w-md [&:not([open])]:hidden"
+	aria-labelledby="favorites-title"
+>
+	<div class="flex items-center justify-between border-b border-line px-6 py-4">
+		<h2 id="favorites-title" class="text-lg font-bold">ดีลที่บันทึกไว้</h2>
+		<button
+			type="button"
+			data-favorites-close
+			class="rounded-xl p-2 text-muted transition hover:bg-subtle hover:text-ink"
+			aria-label="ปิด"
+		>
+			<X size={20} stroke-width={2} />
+		</button>
+	</div>
+	<div class="flex-1 space-y-8 overflow-y-auto px-4 py-6 sm:px-6">
+		{
+			[
+				[
+					"favorites",
+					"รายการโปรด",
+					"ยังไม่มีดีลที่ชอบเลย ลองหาสิ่งที่ชอบดูนะ!",
+				],
+				[
+					"done",
+					"ที่ใช้สิทธิ์แล้ว",
+					"ยังไม่มีดีลที่ใช้สิทธิ์แล้ว รีบใช้ก่อนไม่ทัน!",
+				],
+			].map(([kind, title, empty]) => (
+				<section>
+					<h3 class="flex items-center gap-2 px-2 text-sm font-semibold">
+						{title}
+						<span
+							data-saved-count={kind}
+							class="rounded-full bg-subtle px-2 text-xs font-medium tabular-nums text-muted"
+						/>
+					</h3>
+					<ul data-saved-list={kind} class="mt-2 space-y-1" />
+					<p
+						data-saved-empty={kind}
+						class="mt-2 rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-faint"
+					>
+						{empty}
+					</p>
+				</section>
+			))
+		}
+	</div>
+	<template data-saved-item>
+		<li class="group flex items-center gap-1 rounded-xl transition-colors hover:bg-subtle">
+			<a class="flex min-w-0 flex-1 items-center gap-3 rounded-xl p-2">
+				<span
+					data-initial
+					class="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-orange-400 text-sm font-black text-neutral-950"
+				></span>
+				<span class="min-w-0">
+					<span data-provider class="block text-xs text-faint"></span>
+					<span data-name class="block truncate font-semibold"></span>
+				</span>
+			</a>
+			<button
+				type="button"
+				data-remove
+				class="mr-1 shrink-0 rounded-lg p-2 text-faint transition hover:bg-line hover:text-ink pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:focus-visible:opacity-100"
+			>
+				<X size={18} stroke-width={2} />
+			</button>
+		</li>
+	</template>
+	<script
+		type="application/json"
+		id="saved-deals"
+		set:html={jsonScript(dealInfo)}
+	/>
+</dialog>
+
+<script>
+	import {
+		getSaved,
+		onSavedChange,
+		toggleSaved,
+		type SavedKind,
+	} from "@/lib/saved";
+
+	type DealInfo = { name: string; provider: string; icon?: string };
+
+	const dealInfo: Record<string, DealInfo> = JSON.parse(
+		document.getElementById("saved-deals")!.textContent!,
+	);
+	const itemTemplate =
+		document.querySelector<HTMLTemplateElement>("[data-saved-item]")!;
+	const badge = document.querySelector<HTMLElement>("[data-fav-badge]")!;
+	const trigger = document.querySelector<HTMLButtonElement>(
+		"[data-favorites-trigger]",
+	)!;
+	const drawer = document.querySelector<HTMLDialogElement>(
+		"[data-favorites-drawer]",
+	)!;
+	const closeButton = document.querySelector<HTMLButtonElement>(
+		"[data-favorites-close]",
+	)!;
+	const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+	// the letter stays visible if the icon fails to load
+	function fillIcon(el: Element, deal: DealInfo) {
+		el.textContent = deal.provider[0];
+		if (!deal.icon) return;
+		const img = document.createElement("img");
+		img.src = deal.icon;
+		img.alt = "";
+		img.referrerPolicy = "no-referrer";
+		img.className = "absolute inset-0 size-full bg-white object-contain";
+		img.onerror = () => img.remove();
+		el.append(img);
+	}
+
+	function createItem(kind: SavedKind, id: string) {
+		const deal = dealInfo[id];
+		const li = itemTemplate.content.firstElementChild!.cloneNode(
+			true,
+		) as HTMLLIElement;
+		li.querySelector("a")!.href = `/deals/${id}`;
+		fillIcon(li.querySelector("[data-initial]")!, deal);
+		li.querySelector("[data-provider]")!.textContent = deal.provider;
+		li.querySelector("[data-name]")!.textContent = deal.name;
+		const remove = li.querySelector<HTMLButtonElement>("[data-remove]")!;
+		remove.setAttribute("aria-label", `เอา ${deal.name} ออก`);
+		remove.addEventListener("click", () => toggleSaved(kind, id));
+		return li;
+	}
+
+	function renderList(kind: SavedKind, ids: string[]) {
+		document
+			.querySelector(`[data-saved-list="${kind}"]`)!
+			.replaceChildren(...ids.map((id) => createItem(kind, id)));
+		document.querySelector<HTMLElement>(`[data-saved-empty="${kind}"]`)!.hidden =
+			ids.length > 0;
+		document.querySelector(`[data-saved-count="${kind}"]`)!.textContent =
+			String(ids.length);
+	}
+
+	// no pop on first render
+	function updateBadge(count: number) {
+		const grew = badge.textContent !== "" && count > Number(badge.textContent);
+		badge.hidden = count === 0;
+		badge.textContent = String(count);
+		if (grew && !reduceMotion.matches)
+			badge.animate([{ scale: 1.6 }, { scale: 1 }], {
+				duration: 300,
+				easing: "ease-out",
+			});
+	}
+
+	function render() {
+		for (const kind of ["favorites", "done"] as const) {
+			// skip slugs of deals that no longer exist
+			const ids = getSaved(kind).filter((id) => id in dealInfo);
+			renderList(kind, ids);
+			if (kind === "favorites") updateBadge(ids.length);
+		}
+	}
+
+	let closeTimeout: number | undefined;
+
+	function open() {
+		window.clearTimeout(closeTimeout);
+		drawer.showModal();
+		trigger.setAttribute("aria-expanded", "true");
+		requestAnimationFrame(() => {
+			drawer.classList.remove("translate-x-full");
+			drawer.classList.add("translate-x-0");
+			closeButton.focus();
+		});
+	}
+
+	function close() {
+		drawer.classList.remove("translate-x-0");
+		drawer.classList.add("translate-x-full");
+		closeTimeout = window.setTimeout(() => drawer.close(), 300);
+	}
+
+	render();
+	onSavedChange(render);
+
+	trigger.addEventListener("click", open);
+	closeButton.addEventListener("click", close);
+	drawer.addEventListener("click", (event) => {
+		if (event.target === drawer) close(); // click on the backdrop
+	});
+	drawer.addEventListener("cancel", (event) => {
+		event.preventDefault(); // Escape: animate out instead of closing at once
+		close();
+	});
+	drawer.addEventListener("close", () => {
+		trigger.setAttribute("aria-expanded", "false");
+		trigger.focus();
+	});
+</script>

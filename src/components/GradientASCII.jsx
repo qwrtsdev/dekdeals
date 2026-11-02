@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useRef } from 'react';
 import '@/styles/GradientASCII.css';
 
@@ -445,9 +443,9 @@ const GradientASCII = ({
   intro = true,
   lightMode = false,
   fontFamily = DEFAULT_FONT,
-  dpr,
+  dpr = undefined,
   className = '',
-  style,
+  style = undefined,
   ...rest
 }) => {
   const containerRef = useRef(null);

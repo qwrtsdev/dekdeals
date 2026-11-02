@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useRef } from 'react';
 
 import '@/styles/ShapeGrid.css';
@@ -260,7 +258,7 @@ export default function ShapeGrid({
   speed = 0.5,
   lineColor = '#2a2734',
   hoverColor = '#ffffff',
-  hoverFillColor,
+  hoverFillColor = undefined,
   fillOpacity = 0.15,
   rainbow = false,
   tiltX = 0,
@@ -275,9 +273,9 @@ export default function ShapeGrid({
   opacity = 1,
   backgroundColor = 'transparent',
   paused = false,
-  dpr,
+  dpr = undefined,
   className = '',
-  style
+  style = undefined
 }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -611,7 +609,6 @@ export default function ShapeGrid({
       const s = settingsRef.current;
       const dt = state.last ? Math.min(0.05, (now - state.last) / 1000) : 1 / 60;
       state.last = now;
-      resize();
       if (!state.started) {
         state.started = true;
         state.startedAt = state.time;
