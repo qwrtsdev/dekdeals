@@ -15,6 +15,16 @@ export default defineConfig({
       weights: [400, 500, 600, 700, 900],
       subsets: ["thai", "latin"],
       styles: ["normal"],
+    },
+    {
+      provider: fontProviders.local(),
+      name: "Pixeloid Sans",
+      cssVariable: "--font-pixeloid",
+      options: {
+        variants: [
+          { src: ["./src/assets/fonts/PixeloidSans.ttf"], weight: 400, style: "normal" },
+        ],
+      },
     }
   ],
 

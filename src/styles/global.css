@@ -11,6 +11,7 @@
 	--color-ink: var(--ink);
 	--color-muted: var(--muted);
 	--color-faint: var(--faint);
+	--font-pixel: var(--font-pixeloid), var(--font-noto-sans-thai), sans-serif;
 }
 
 :root,
